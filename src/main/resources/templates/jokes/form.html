@@ -11,72 +11,66 @@
 <div class="container mt-4">
     <h1 th:text="${joke.id} != null ? 'Editar chiste' : 'Nuevo chiste'"></h1>
 
-    <!-- FORMULARIO CREAR -->
+    <!-- Creación -->
     <form th:if="${joke.id} == null"
           th:action="@{/jokes}"
           th:object="${joke}"
           method="post">
 
+        <!-- Texto 1 -->
         <div class="mb-3">
             <label th:for="'text1-new'" class="form-label">Texto 1</label>
-            <input type="text"
-                   th:id="'text1-new'"
-                   th:field="*{text1}"
-                   class="form-control"/>
+            <input type="text" th:id="'text1-new'" th:field="*{text1}" class="form-control"/>
             <div class="text-danger" th:errors="*{text1}"></div>
         </div>
 
+        <!-- Texto 2 -->
         <div class="mb-3">
             <label th:for="'text2-new'" class="form-label">Texto 2</label>
-            <input type="text"
-                   th:id="'text2-new'"
-                   th:field="*{text2}"
-                   class="form-control"/>
+            <input type="text" th:id="'text2-new'" th:field="*{text2}" class="form-control"/>
             <div class="text-danger" th:errors="*{text2}"></div>
         </div>
 
+        <!-- Categoría -->
         <div class="mb-3">
             <label th:for="'category-new'" class="form-label">Categoría</label>
-            <select th:id="'category-new'"
-                    th:field="*{category.id}"
-                    class="form-select">
+            <select th:id="'category-new'" th:field="*{category.id}" class="form-select">
                 <option th:each="c : ${categories}"
                         th:value="${c.id}"
                         th:text="${c.category}"/>
             </select>
         </div>
 
+        <!-- Tipo -->
         <div class="mb-3">
             <label th:for="'type-new'" class="form-label">Tipo</label>
-            <select th:id="'type-new'"
-                    th:field="*{type.id}"
-                    class="form-select">
+            <select th:id="'type-new'" th:field="*{type.id}" class="form-select">
                 <option th:each="t : ${types}"
                         th:value="${t.id}"
                         th:text="${t.type}"/>
             </select>
         </div>
 
+        <!-- Idioma -->
         <div class="mb-3">
             <label th:for="'language-new'" class="form-label">Idioma</label>
-            <select th:id="'language-new'"
-                    th:field="*{language.id}"
-                    class="form-select">
+            <select th:id="'language-new'" th:field="*{language.id}" class="form-select">
                 <option th:each="l : ${languages}"
                         th:value="${l.id}"
                         th:text="${l.language}"/>
             </select>
         </div>
 
+        <!-- Flags: bind a flagIds -->
         <div class="mb-3">
             <label class="form-label">Flags</label>
-            <div th:each="f, stat : ${allFlags}" class="form-check">
+            <div th:each="f : ${allFlags}" class="form-check">
                 <input class="form-check-input"
                        type="checkbox"
-                       th:field="*{flags[__${stat.index}__].id}"
-                       th:id="'flag-new-' + ${stat.index}"
-                       th:value="${f.id}"/>
-                <label th:for="'flag-new-' + ${stat.index}"
+                       th:field="*{flagIds}"
+                       th:value="${f.id}"
+                       th:id="'flag-new-' + ${f.id}" />
+                <label th:for="'flag-new-' + ${f.id}"
                        th:text="${f.flag}"
                        class="form-check-label"></label>
             </div>
@@ -86,12 +80,13 @@
         <a th:href="@{/jokes}" class="btn btn-secondary">Cancelar</a>
     </form>
 
-    <!-- FORMULARIO EDICIÓN -->
+    <!-- Edición -->
     <form th:if="${joke.id} != null"
           th:action="@{/jokes/{id}(id=${joke.id})}"
           th:object="${joke}"
           method="post">
 
+        <!-- Texto 1 -->
         <div class="mb-3">
             <label th:for="${'text1-' + joke.id}" class="form-label">Texto 1</label>
             <input type="text"
@@ -101,6 +96,7 @@
             <div class="text-danger" th:errors="*{text1}"></div>
         </div>
 
+        <!-- Texto 2 -->
         <div class="mb-3">
             <label th:for="${'text2-' + joke.id}" class="form-label">Texto 2</label>
             <input type="text"
@@ -110,52 +106,46 @@
             <div class="text-danger" th:errors="*{text2}"></div>
         </div>
 
+        <!-- Categoría -->
         <div class="mb-3">
             <label th:for="${'category-' + joke.id}" class="form-label">Categoría</label>
-            <select th:id="${'category-' + joke.id}"
-                    th:field="*{category.id}"
-                    class="form-select">
+            <select th:id="${'category-' + joke.id}" th:field="*{category.id}" class="form-select">
                 <option th:each="c : ${categories}"
                         th:value="${c.id}"
-                        th:text="${c.category}"
-                        th:selected="${c.id == joke.category.id}"/>
+                        th:text="${c.category}"/>
             </select>
         </div>
 
+        <!-- Tipo -->
         <div class="mb-3">
             <label th:for="${'type-' + joke.id}" class="form-label">Tipo</label>
-            <select th:id="${'type-' + joke.id}"
-                    th:field="*{type.id}"
-                    class="form-select">
+            <select th:id="${'type-' + joke.id}" th:field="*{type.id}" class="form-select">
                 <option th:each="t : ${types}"
                         th:value="${t.id}"
-                        th:text="${t.type}"
-                        th:selected="${t.id == joke.type.id}"/>
+                        th:text="${t.type}"/>
             </select>
         </div>
 
+        <!-- Idioma -->
         <div class="mb-3">
             <label th:for="${'language-' + joke.id}" class="form-label">Idioma</label>
-            <select th:id="${'language-' + joke.id}"
-                    th:field="*{language.id}"
-                    class="form-select">
+            <select th:id="${'language-' + joke.id}" th:field="*{language.id}" class="form-select">
                 <option th:each="l : ${languages}"
                         th:value="${l.id}"
-                        th:text="${l.language}"
-                        th:selected="${l.id == joke.language.id}"/>
+                        th:text="${l.language}"/>
             </select>
         </div>
 
+        <!-- Flags: bind a flagIds (Thymeleaf marca los que ya estén en joke.flagIds) -->
         <div class="mb-3">
             <label class="form-label">Flags</label>
-            <div th:each="f, stat : ${allFlags}" class="form-check">
+            <div th:each="f : ${allFlags}" class="form-check">
                 <input class="form-check-input"
                        type="checkbox"
-                       th:field="*{flags[__${stat.index}__].id}"
-                       th:id="'flag-' + ${joke.id} + '-' + ${stat.index}"
+                       th:field="*{flagIds}"
                        th:value="${f.id}"
-                       th:checked="${#lists.contains(joke.flags.![id], f.id)}"/>
-                <label th:for="'flag-' + ${joke.id} + '-' + ${stat.index}"
+                       th:id="'flag-' + ${joke.id} + '-' + ${f.id}" />
+                <label th:for="'flag-' + ${joke.id} + '-' + ${f.id}"
                        th:text="${f.flag}"
                        class="form-check-label"></label>
             </div>
