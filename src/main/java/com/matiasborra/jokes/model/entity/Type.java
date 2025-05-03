@@ -1,61 +1,43 @@
 package com.matiasborra.jokes.model.entity;
 
 import jakarta.persistence.*;
-
-import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "types", schema = "public")
-public class Type implements java.io.Serializable {
-
-	@Serial
+public class Type implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "id", unique = true, nullable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	@Column(name = "id", unique = true, nullable = false)
+	private Long id;
 
 	@Column(name = "type", nullable = false)
 	private String type;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "types")
-	private Set<Joke> jokeses = new HashSet<Joke>(0);
+	@OneToMany(mappedBy = "type", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Joke> jokes = new HashSet<>();
 
-	public Type() {
-	}
+	public Type() {}
 
-	public Type(long id, String type) {
-		this.id = id;
-		this.type = type;
-	}
+	public Long getId() { return id; }
+	public void setId(Long id) { this.id = id; }
 
-	public Type(long id, String type, Set<Joke> jokeses) {
-		this.id = id;
-		this.type = type;
-		this.jokeses = jokeses;
-	}
+	public String getType() { return type; }
+	public void setType(String type) { this.type = type; }
 
-	public long getId() {
-		return this.id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
+	public Set<Joke> getJokes() { return jokes; }
+	public void setJokes(Set<Joke> jokes) { this.jokes = jokes; }
 
-	public String getType() {
-		return this.type;
+	public void addJoke(Joke joke) {
+		jokes.add(joke);
+		joke.setType(this);
 	}
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public Set<Joke> getJokeses() {
-		return this.jokeses;
-	}
-	public void setJokeses(Set<Joke> jokeses) {
-		this.jokeses = jokeses;
+	public void removeJoke(Joke joke) {
+		jokes.remove(joke);
+		joke.setType(null);
 	}
 }
