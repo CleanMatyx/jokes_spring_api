@@ -1,134 +1,89 @@
+<!-- templates/primera_vez/form.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8"/>
-  <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
   <title th:text="${primeraVez.id} != null ? 'Editar emisión' : 'Nueva emisión'">Formulario</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
 
-<div class="container mt-4">
+<div class="container mt-4" style="max-width: 600px;">
   <h1 th:text="${primeraVez.id} != null ? 'Editar emisión' : 'Nueva emisión'"></h1>
 
-  <!-- FORMULARIO NUEVO -->
-  <form th:if="${primeraVez.id} == null"
-        th:action="@{/primera_vez/save}"
+  <form th:action="@{/primera_vez/save}"
         th:object="${primeraVez}"
         method="post">
-    <!-- ocultamos el id porque es null -->
+
+    <!-- Para edición, ocultamos el id -->
+    <input type="hidden" th:if="${primeraVez.id != null}" th:field="*{id}"/>
+    <!-- Siempre enviamos el jokeId -->
     <input type="hidden" th:field="*{jokeId}"/>
 
-    <!-- programa -->
+    <!-- Contexto: mostrar el chiste -->
+    <div class="mb-3">
+      <label class="form-label">Chiste</label>
+      <p class="form-control-plaintext">
+        <b th:text="${joke.text1}">Texto1</b><br/>
+        <small th:text="${joke.text2}">Texto2</small>
+      </p>
+    </div>
+
+    <!-- Programa -->
     <div class="mb-3">
       <label for="programa" class="form-label">Programa</label>
-      <input type="text" id="programa" th:field="*{programa}" class="form-control"/>
+      <input type="text"
+             id="programa"
+             th:field="*{programa}"
+             class="form-control"
+             placeholder="Nombre del programa"/>
+      <div class="text-danger" th:if="${#fields.hasErrors('programa')}"
+           th:errors="*{programa}">Error</div>
     </div>
 
-    <!-- fecha emisión -->
+    <!-- Fecha Emisión -->
     <div class="mb-3">
       <label for="fechaEmision" class="form-label">Fecha Emisión</label>
-      <input type="datetime-local" id="fechaEmision" th:field="*{fechaEmision}" class="form-control"/>
+      <input type="datetime-local"
+             id="fechaEmision"
+             th:field="*{fechaEmision}"
+             class="form-control"/>
+      <div class="text-danger" th:if="${#fields.hasErrors('fechaEmision')}"
+           th:errors="*{fechaEmision}">Error</div>
     </div>
 
-    <!-- teléfonos -->
+    <!-- Telefónos -->
     <div class="mb-3">
       <label class="form-label">Teléfonos</label>
+      <!-- Si no hay ninguno (nuevo), mostramos un primer input -->
+      <div th:if="${#lists.isEmpty(primeraVez.telefonos)}">
+        <div class="input-group mb-2">
+          <input type="text"
+                 th:field="*{telefonos[0].numero}"
+                 class="form-control"
+                 placeholder="Número"/>
+        </div>
+      </div>
+      <!-- Para cada TelefonoDTO existente -->
       <div th:each="t, idx : ${primeraVez.telefonos}" class="input-group mb-2">
         <input type="text"
                th:field="*{telefonos[__${idx}__].numero}"
                class="form-control"
                placeholder="Número"/>
-        <button type="button" class="btn btn-outline-danger"
-                onclick="this.closest('.input-group').remove()">
-          ✖
-        </button>
       </div>
-      <button type="button" class="btn btn-outline-primary mb-3"
-              onclick="
-                const form = this.closest('form');
-                const idx = form.querySelectorAll('.input-group').length;
-                const tpl = `
-                  <div class='input-group mb-2'>
-                    <input type='text' name='telefonos[${idx}].numero'
-                           class='form-control' placeholder='Número'/>
-                    <button type='button' class='btn btn-outline-danger'
-                            onclick='this.closest(\".input-group\").remove()'>
-      ✖
-      </button>
-    </div>`;
-    form.insertBefore(
-    document.createRange().createContextualFragment(tpl),
-    this
-    );
-    ">
-    + Teléfono
-    </button>
-</div>
-
-<button type="submit" class="btn btn-success">Guardar</button>
-<a th:href="@{/jokes}" class="btn btn-secondary">Cancelar</a>
-</form>
-
-<!-- FORMULARIO EDICIÓN -->
-<form th:if="${primeraVez.id} != null"
-      th:action="@{/primera_vez/save}"
-      th:object="${primeraVez}"
-      method="post">
-  <!-- incluido el id para que el servicio distinga update de insert -->
-  <input type="hidden" th:field="*{id}"/>
-  <input type="hidden" th:field="*{jokeId}"/>
-
-  <!-- programa -->
-  <div class="mb-3">
-    <label for="programa" class="form-label">Programa</label>
-    <input type="text" id="programa" th:field="*{programa}" class="form-control"/>
-  </div>
-
-  <!-- fecha emisión -->
-  <div class="mb-3">
-    <label for="fechaEmision" class="form-label">Fecha Emisión</label>
-    <input type="datetime-local" id="fechaEmision" th:field="*{fechaEmision}" class="form-control"/>
-  </div>
-
-  <!-- teléfonos -->
-  <div class="mb-3">
-    <label class="form-label">Teléfonos</label>
-    <div th:each="t, idx : ${primeraVez.telefonos}" class="input-group mb-2">
-      <input type="text"
-             th:field="*{telefonos[__${idx}__].numero}"
-             class="form-control"
-             placeholder="Número"/>
-      <button type="button" class="btn btn-outline-danger"
-              onclick="this.closest('.input-group').remove()">
-        ✖
-      </button>
+      <div class="text-danger" th:if="${#fields.hasErrors('telefonos')}"
+           th:errors="*{telefonos}">Debes indicar al menos un teléfono</div>
     </div>
-    <button type="button" class="btn btn-outline-primary mb-3"
-            onclick="
-                const form = this.closest('form');
-                const idx = form.querySelectorAll('.input-group').length;
-                const tpl = `
-                  <div class='input-group mb-2'>
-                    <input type='text' name='telefonos[${idx}].numero'
-                           class='form-control' placeholder='Número'/>
-                    <button type='button' class='btn btn-outline-danger'
-                            onclick='this.closest(\".input-group\").remove()'>
-    ✖
-    </button>
-  </div>`;
-  form.insertBefore(
-  document.createRange().createContextualFragment(tpl),
-  this
-  );
-  ">
-  + Teléfono
-  </button>
-  </div>
 
-  <button type="submit" class="btn btn-success">Actualizar</button>
-  <a th:href="@{/jokes}" class="btn btn-secondary">Cancelar</a>
-</form>
+    <!-- Botones -->
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-success">
+        <span th:text="${primeraVez.id} != null ? 'Actualizar' : 'Guardar'">Guardar</span>
+      </button>
+      <a th:href="@{/jokes}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>

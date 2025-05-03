@@ -1,7 +1,6 @@
 package com.matiasborra.jokes.controller.web;
 
 import com.matiasborra.jokes.dto.FlagDTO;
-import com.matiasborra.jokes.model.entity.Flag;
 import com.matiasborra.jokes.model.services.IFlagService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -29,16 +28,18 @@ public class FlagWebController {
 
     /** Form para crear **/
     @GetMapping("/new")
-    public String createForm(Model model) {
-        model.addAttribute("flag", new Flag());
+    public String newForm(Model model) {
+        model.addAttribute("flag", new FlagDTO());
         return "flags/form";
     }
 
     /** Procesar creación **/
     @PostMapping
-    public String create(@Valid @ModelAttribute("flag") FlagDTO flag,
-                         BindingResult result,
-                         RedirectAttributes attrs) {
+    public String create(
+            @Valid @ModelAttribute("flag") FlagDTO flag,
+            BindingResult result,
+            RedirectAttributes attrs
+    ) {
         if (result.hasErrors()) {
             return "flags/form";
         }
@@ -48,28 +49,34 @@ public class FlagWebController {
     }
 
     /** Form para editar **/
-    @GetMapping("/edit/{id}")
+    @GetMapping("/{id}")
     public String editForm(@PathVariable Long id, Model model) {
-        model.addAttribute("flag", flagService.findById(id));
+        FlagDTO dto = flagService.findById(id);
+        model.addAttribute("flag", dto);
         return "flags/form";
     }
 
     /** Procesar edición **/
     @PostMapping("/{id}")
-    public String update(@PathVariable Long id,
-                         @Valid @ModelAttribute("flag") FlagDTO flag,
-                         BindingResult result) {
+    public String update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("flag") FlagDTO flag,
+            BindingResult result,
+            RedirectAttributes attrs
+    ) {
         if (result.hasErrors()) {
             return "flags/form";
         }
         flagService.update(id, flag);
+        attrs.addFlashAttribute("success", "Flag actualizada correctamente");
         return "redirect:/flags";
     }
 
     /** Borrar **/
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable Long id, RedirectAttributes attrs) {
         flagService.delete(id);
+        attrs.addFlashAttribute("success", "Flag borrada correctamente");
         return "redirect:/flags";
     }
 }

@@ -7,18 +7,19 @@
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
-<div class="container mt-4">
-    <h1 th:text="${flag.id} != null ? 'Editar Flag' : 'Nueva Flag'">Formulario Flag</h1>
 
-    <!-- CREAR -->
+<div class="container mt-4">
+    <h1 th:text="${flag.id} != null ? 'Editar Flag' : 'Nueva Flag'"></h1>
+
+    <!-- Crear -->
     <form th:if="${flag.id} == null"
           th:action="@{/flags}"
           th:object="${flag}"
           method="post">
         <div class="mb-3">
-            <label th:for="'flag-new'" class="form-label">Flag</label>
+            <label for="flag-new" class="form-label">Flag</label>
             <input type="text"
-                   th:id="'flag-new'"
+                   id="flag-new"
                    th:field="*{flag}"
                    class="form-control"
                    placeholder="Introduce la flag"/>
@@ -28,25 +29,27 @@
         <a th:href="@{/flags}" class="btn btn-secondary">Cancelar</a>
     </form>
 
-    <!-- EDITAR -->
+    <!-- Editar -->
     <form th:if="${flag.id} != null"
-          th:action="@{/flags/{id}(id=${flag.id})}"
+          th:action="@{/flags}"
           th:object="${flag}"
           method="post">
+        <input type="hidden" th:field="*{id}"/>
+
         <div class="mb-3">
-            <label th:for="${'flag-' + flag.id}" class="form-label">Flag</label>
+            <label for="flag-edit" class="form-label">Flag</label>
             <input type="text"
-                   th:id="${'flag-' + flag.id}"
+                   id="flag-edit"
                    th:field="*{flag}"
                    class="form-control"
                    placeholder="Introduce la flag"/>
             <div class="text-danger" th:errors="*{flag}"></div>
         </div>
-        <button class="btn btn-success">Guardar</button>
+        <button class="btn btn-success">Actualizar</button>
         <a th:href="@{/flags}" class="btn btn-secondary">Cancelar</a>
     </form>
-
 </div>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

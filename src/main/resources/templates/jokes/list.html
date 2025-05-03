@@ -4,77 +4,103 @@
     <meta charset="UTF-8"/>
     <title>Listado de chistes</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <!-- Opcional: iconos de Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
 </head>
 <body>
-<div th:replace="~{fragments/header :: header}"></div>
+<!-- Header -->
+<div th:replace="fragments/header :: header"></div>
 
-<div class="container mt-4">
-    <h1>Listado de chistes</h1>
-    <a class="btn btn-primary mb-3" th:href="@{/jokes/new}">Nuevo chiste</a>
+<div class="container mt-4" style="max-width: 1100px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Listado de chistes</h1>
+        <a class="btn btn-primary" th:href="@{/jokes/new}">
+            <i class="bi bi-plus-lg"></i> Nuevo chiste
+        </a>
+    </div>
 
-    <!-- buscador opcional -->
-    <form th:action="@{/jokes}" method="get" class="mb-3">
-        <div class="input-group">
-            <input name="q" th:value="${q}" class="form-control" placeholder="Buscar texto1…"/>
-            <button class="btn btn-outline-secondary">Buscar</button>
+    <!-- Buscador -->
+    <form th:action="@{/jokes}" method="get" class="row g-2 mb-4">
+        <div class="col-auto">
+            <input
+                    type="text"
+                    name="q"
+                    th:value="${q}"
+                    class="form-control form-control-sm"
+                    placeholder="Buscar texto1…"/>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-search"></i> Buscar
+            </button>
         </div>
     </form>
 
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Texto 1</th>
-            <th>Texto 2</th>
-            <th>Categoría</th>
-            <th>Tipo</th>
-            <th>Idioma</th>
-            <th>Flags</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="j : ${jokes}">
-            <td th:text="${j.id}"></td>
-            <td th:text="${j.text1}"></td>
-            <td th:text="${j.text2}"></td>
-            <td th:text="${j.category.category}"></td>
-            <td th:text="${j.type.type}"></td>
-            <td th:text="${j.language.language}"></td>
-            <td>
-                <ul class="mb-0">
-                    <li th:each="f : ${j.flags}" th:text="${f.flag}"></li>
-                </ul>
-            </td>
-            <td class="d-flex flex-wrap gap-1">
-                <!-- CRUD de chistes -->
-                <a th:href="@{/jokes/{id}(id=${j.id})}"
-                   class="btn btn-sm btn-warning">
-                    ✎ Editar
-                </a>
-                <a th:href="@{/jokes/delete/{id}(id=${j.id})}"
-                   class="btn btn-sm btn-danger"
-                   onclick="return confirm('¿Seguro que quieres borrar este chiste?');">
-                    🗑️ Borrar
-                </a>
-
-                <!-- Gestión de Primera Vez -->
-                <a th:if="${j.primeraVez != null}"
-                   th:href="@{/primera_vez/edit/{jokeId}(jokeId=${j.id})}"
-                   class="btn btn-sm btn-outline-primary">
-                    ✎ Editar emisión
-                </a>
-                <a th:if="${j.primeraVez == null}"
-                   th:href="@{/primera_vez/new/{jokeId}(jokeId=${j.id})}"
-                   class="btn btn-sm btn-outline-success">
-                    + Añadir emisión
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <!-- Tabla -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-sm align-middle">
+            <thead class="table-light">
+            <tr>
+                <th style="width: 5%;">ID</th>
+                <th style="width: 25%;">Texto 1</th>
+                <th style="width: 25%;">Texto 2</th>
+                <th style="width: 10%;">Categoría</th>
+                <th style="width: 10%;">Tipo</th>
+                <th style="width: 10%;">Idioma</th>
+                <th style="width: 10%;">Flags</th>
+                <th style="width: 15%;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="j : ${jokes}">
+                <td th:text="${j.id}">1</td>
+                <td th:text="${j.text1}">¿…?</td>
+                <td th:text="${j.text2}">…</td>
+                <td th:text="${j.category.category}">Programming</td>
+                <td th:text="${j.type.type}">single</td>
+                <td th:text="${j.language.language}">English</td>
+                <td>
+                    <ul class="mb-0 ps-3">
+                        <li th:each="f : ${j.flags}" th:text="${f.flag}">nsfw</li>
+                    </ul>
+                </td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Acciones">
+                        <!-- Editar chiste -->
+                        <a th:href="@{/jokes/{id}(id=${j.id})}"
+                           class="btn btn-sm btn-warning"
+                           title="Editar chiste">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <!-- Borrar chiste -->
+                        <a th:href="@{/jokes/delete/{id}(id=${j.id})}"
+                           class="btn btn-sm btn-danger ms-1"
+                           title="Borrar chiste">
+                            <i class="bi bi-trash"></i> Borrar
+                        </a>
+                        <!-- Añadir emisión si NO tiene primeraVez -->
+                        <a th:if="${j.primeraVez == null}"
+                           th:href="@{/primera_vez/new/{jokeId}(jokeId=${j.id})}"
+                           class="btn btn-sm btn-info ms-1"
+                           title="Añadir emisión">
+                            <i class="bi bi-play-btn"></i> Emisión
+                        </a>
+                        <!-- Editar emisión si YA tiene primeraVez -->
+                        <a th:if="${j.primeraVez != null}"
+                           th:href="@{/primera_vez/edit/{jokeId}(jokeId=${j.id})}"
+                           class="btn btn-sm btn-secondary ms-1"
+                           title="Editar emisión">
+                            <i class="bi bi-pencil-square"></i> Emisión
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
+<!-- Footer -->
+<div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>
