@@ -1,4 +1,14 @@
 package com.matiasborra.jokes.model.services;
 
-public class IJokeService {
+import com.matiasborra.jokes.dto.JokeDTO;
+import com.matiasborra.jokes.model.entity.Joke;
+
+import java.util.List;
+
+public interface IJokeService {
+    List<JokeDTO> findAll();
+    JokeDTO findById(Long id);
+    JokeDTO create(JokeDTO dto);
+    JokeDTO update(Long id, JokeDTO dto);
+    void delete(Long id);
 }

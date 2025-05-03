@@ -1,49 +1,45 @@
 package com.matiasborra.jokes.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-import java.io.Serial;
-import java.io.Serializable;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "jokes_flags", schema = "public")
-public class JokeFlag implements Serializable {
+@Table(name="jokes_flags")
+public class JokeFlag {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+    @EmbeddedId
+    private JokeFlagKey id;
 
-    @Id
-    @Column(name = "joke_id", nullable = false)
-    private Long jokeId;
+    @MapsId("jokeId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="joke_id")
+    private Joke joke;
 
-    @Id
-    @Column(name = "flag_id", nullable = false)
-    private Long flagId;
+    @MapsId("flagId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="flag_id")
+    private Flag flag;
 
-    public JokeFlag() {
+    public JokeFlagKey getId() {
+        return id;
     }
 
-    public JokeFlag(Long jokeId, Long flagId) {
-        this.jokeId = jokeId;
-        this.flagId = flagId;
+    public void setId(JokeFlagKey id) {
+        this.id = id;
     }
 
-    public Long getJokeId() {
-        return jokeId;
+    public Joke getJoke() {
+        return joke;
     }
 
-    public void setJokeId(Long jokeId) {
-        this.jokeId = jokeId;
+    public void setJoke(Joke joke) {
+        this.joke = joke;
     }
 
-    public Long getFlagId() {
-        return flagId;
+    public Flag getFlag() {
+        return flag;
     }
 
-    public void setFlagId(Long flagId) {
-        this.flagId = flagId;
+    public void setFlag(Flag flag) {
+        this.flag = flag;
     }
 }
