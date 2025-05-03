@@ -1,4 +1,3 @@
-// src/main/java/com/matiasborra/jokes/model/entity/JokeFlagKey.java
 package com.matiasborra.jokes.model.entity;
 
 import jakarta.persistence.*;
@@ -18,7 +17,6 @@ public class JokeFlagKey implements Serializable {
         this.jokeId = jokeId;
         this.flagId = flagId;
     }
-    // getters / setters
 
     public Long getJokeId() { return jokeId; }
     public void setJokeId(Long jokeId) { this.jokeId = jokeId; }

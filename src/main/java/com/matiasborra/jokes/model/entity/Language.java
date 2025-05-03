@@ -1,4 +1,3 @@
-// src/main/java/com/matiasborra/jokes/model/entity/Language.java
 package com.matiasborra.jokes.model.entity;
 
 import jakarta.persistence.*;
@@ -23,7 +22,6 @@ public class Language implements Serializable {
 	private Set<Joke> jokes = new HashSet<>();
 
 	public Language() {}
-	// getters + setters
 
 	public Long getId() { return id; }
 	public void setId(Long id) { this.id = id; }

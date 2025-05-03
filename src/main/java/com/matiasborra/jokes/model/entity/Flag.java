@@ -1,4 +1,3 @@
-// src/main/java/com/matiasborra/jokes/model/entity/Flag.java
 package com.matiasborra.jokes.model.entity;
 
 import jakarta.persistence.*;
@@ -25,7 +24,6 @@ public class Flag implements Serializable {
 	private Set<JokeFlag> jokeFlags = new HashSet<>();
 
 	public Flag() {}
-	// getters + setters
 
 	public Long getId() { return id; }
 	public void setId(Long id) { this.id = id; }

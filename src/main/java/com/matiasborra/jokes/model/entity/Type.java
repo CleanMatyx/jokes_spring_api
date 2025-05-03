@@ -1,4 +1,3 @@
-// src/main/java/com/matiasborra/jokes/model/entity/Type.java
 package com.matiasborra.jokes.model.entity;
 
 import jakarta.persistence.*;
@@ -20,7 +19,6 @@ public class Type implements Serializable {
 	private Set<Joke> jokes = new HashSet<>();
 
 	public Type() {}
-	// getters + setters
 
 	public Long getId() { return id; }
 	public void setId(Long id) { this.id = id; }

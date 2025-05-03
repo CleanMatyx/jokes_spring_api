@@ -1,4 +1,3 @@
-// src/main/java/com/matiasborra/jokes/model/entity/Category.java
 package com.matiasborra.jokes.model.entity;
 
 import jakarta.persistence.*;
@@ -22,7 +21,6 @@ public class Category implements Serializable {
 	private Set<Joke> jokes = new HashSet<>();
 
 	public Category() {}
-	// getters + setters
 
 	public Long getId() { return id; }
 	public void setId(Long id) { this.id = id; }
@@ -33,7 +31,6 @@ public class Category implements Serializable {
 	public Set<Joke> getJokes() { return jokes; }
 	public void setJokes(Set<Joke> jokes) { this.jokes = jokes; }
 
-	// helpers
 	public void addJoke(Joke j) {
 		jokes.add(j);
 		j.setCategory(this);

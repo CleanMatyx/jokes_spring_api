@@ -1,4 +1,3 @@
-// src/main/java/com/matiasborra/jokes/model/entity/Joke.java
 package com.matiasborra.jokes.model.entity;
 
 import jakarta.persistence.*;
@@ -37,7 +36,6 @@ public class Joke implements Serializable {
 	private Set<JokeFlag> jokeFlags = new HashSet<>();
 
 	public Joke() {}
-	// getters + setters
 
 	public Long getId() { return id; }
 	public void setId(Long id) { this.id = id; }
@@ -60,7 +58,6 @@ public class Joke implements Serializable {
 	public Set<JokeFlag> getJokeFlags() { return jokeFlags; }
 	public void setJokeFlags(Set<JokeFlag> jokeFlags) { this.jokeFlags = jokeFlags; }
 
-	// helpers para manejar la asociación
 	public void addFlag(Flag f) {
 		JokeFlag jf = new JokeFlag(this, f);
 		jokeFlags.add(jf);
