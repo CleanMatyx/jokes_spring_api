@@ -1,7 +1,6 @@
 package com.matiasborra.jokes.model.services;
 
 import com.matiasborra.jokes.dto.JokeDTO;
-import com.matiasborra.jokes.model.entity.Joke;
 
 import java.util.List;
 
