@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="${primeraVez.id} != null ? 'Editar Primera Vez' : 'Registrar Primera Vez'"></title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="container mt-4">
+  <h1 th:text="${primeraVez.id} != null ? 'Editar emisión' : 'Nueva emisión'"></h1>
+  <form th:action="@{/primera_vez/save}"
+        th:object="${primeraVez}"
+        method="post">
+    <input type="hidden" th:field="*{id}"/>
+    <input type="hidden" th:field="*{jokeId}"
+           th:value="${joke.id}"/>
+
+    <div class="mb-3">
+      <label for="programa" class="form-label">Programa</label>
+      <input type="text" id="programa" th:field="*{programa}"
+             class="form-control"/>
+    </div>
+
+    <div class="mb-3">
+      <label for="fecha_emision" class="form-label">Fecha Emisión</label>
+      <input type="datetime-local" id="fecha_emision"
+             th:field="*{fechaEmision}"
+             class="form-control"/>
+    </div>
+
+    <button class="btn btn-success">Guardar</button>
+    <a th:href="@{/jokes}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

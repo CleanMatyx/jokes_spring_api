@@ -35,6 +35,10 @@ public class Joke implements Serializable {
 	@OneToMany(mappedBy = "joke", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<JokeFlag> jokeFlags = new HashSet<>();
 
+	@OneToOne(mappedBy = "joke", cascade = CascadeType.ALL, orphanRemoval = true,
+			fetch = FetchType.LAZY, optional = true)
+	private PrimeraVez primeraVez;
+
 	public Joke() {}
 
 	public Long getId() { return id; }
@@ -67,4 +71,7 @@ public class Joke implements Serializable {
 		jokeFlags.removeIf(jf -> jf.getFlag().equals(f));
 		f.getJokeFlags().removeIf(jf -> jf.getJoke().equals(this));
 	}
+
+	public PrimeraVez getPrimeraVez() { return primeraVez; }
+	public void setPrimeraVez(PrimeraVez primeraVez) { this.primeraVez = primeraVez; }
 }

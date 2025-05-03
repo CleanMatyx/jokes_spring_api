@@ -21,7 +21,6 @@ public class Flag implements Serializable {
 	@Column(name = "flag", nullable = false)
 	private String flag;
 
-	// Relación muchos a muchos a través de la tabla de unión emojis -> jokes_flags
 	@OneToMany(mappedBy = "flag", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<JokeFlag> jokeFlags = new HashSet<>();
 

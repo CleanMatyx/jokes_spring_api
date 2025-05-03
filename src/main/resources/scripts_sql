@@ -1,0 +1,17 @@
+CREATE TABLE primera_vez (
+  id BIGSERIAL PRIMARY KEY,
+  programa VARCHAR(255) NOT NULL,
+  fecha_emision TIMESTAMP NOT NULL,
+  idjoke BIGINT UNIQUE,
+  CONSTRAINT fk_primera_vez_joke
+    FOREIGN KEY(idjoke)
+    REFERENCES jokes(id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE telefonos (
+  id BIGSERIAL PRIMARY KEY,
+  numero VARCHAR(50) NOT NULL,
+  primera_vez_id BIGINT NOT NULL,
+  CONSTRAINT fk_tel_pv FOREIGN KEY(primera_vez_id) REFERENCES primera_vez(id)
+);
