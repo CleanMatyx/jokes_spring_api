@@ -1,7 +1,7 @@
+// src/main/java/com/matiasborra/jokes/model/entity/JokeFlagKey.java
 package com.matiasborra.jokes.model.entity;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -18,6 +18,7 @@ public class JokeFlagKey implements Serializable {
         this.jokeId = jokeId;
         this.flagId = flagId;
     }
+    // getters / setters
 
     public Long getJokeId() { return jokeId; }
     public void setJokeId(Long jokeId) { this.jokeId = jokeId; }
@@ -33,7 +34,6 @@ public class JokeFlagKey implements Serializable {
         return Objects.equals(jokeId, that.jokeId) &&
                 Objects.equals(flagId, that.flagId);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(jokeId, flagId);

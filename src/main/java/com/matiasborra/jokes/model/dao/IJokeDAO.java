@@ -1,3 +1,4 @@
+// src/main/java/com/matiasborra/jokes/model/dao/IJokeDAO.java
 package com.matiasborra.jokes.model.dao;
 
 import com.matiasborra.jokes.model.entity.Joke;
@@ -10,8 +11,8 @@ public interface IJokeDAO extends JpaRepository<Joke, Long> {
 
     @Override
     @EntityGraph(attributePaths = {
-            "categories",
-            "types",
+            "category",
+            "type",
             "language",
             "jokeFlags",
             "jokeFlags.flag"
@@ -20,8 +21,8 @@ public interface IJokeDAO extends JpaRepository<Joke, Long> {
 
     @Override
     @EntityGraph(attributePaths = {
-            "categories",
-            "types",
+            "category",
+            "type",
             "language",
             "jokeFlags",
             "jokeFlags.flag"
@@ -29,8 +30,8 @@ public interface IJokeDAO extends JpaRepository<Joke, Long> {
     Optional<Joke> findById(Long id);
 
     @EntityGraph(attributePaths = {
-            "categories",
-            "types",
+            "category",
+            "type",
             "language",
             "jokeFlags",
             "jokeFlags.flag"

@@ -1,3 +1,4 @@
+// src/main/java/com/matiasborra/jokes/model/entity/Joke.java
 package com.matiasborra.jokes.model.entity;
 
 import jakarta.persistence.*;
@@ -8,11 +9,9 @@ import java.util.Set;
 @Entity
 @Table(name = "jokes", schema = "public")
 public class Joke implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", updatable = false, nullable = false)
 	private Long id;
 
@@ -34,15 +33,11 @@ public class Joke implements Serializable {
 	@Column(name = "text2", nullable = false)
 	private String text2;
 
-	@OneToMany(
-			mappedBy      = "joke",
-			cascade       = CascadeType.ALL,
-			orphanRemoval = true
-	)
+	@OneToMany(mappedBy = "joke", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<JokeFlag> jokeFlags = new HashSet<>();
 
 	public Joke() {}
-	public Joke(Long id) { this.id = id; }
+	// getters + setters
 
 	public Long getId() { return id; }
 	public void setId(Long id) { this.id = id; }
@@ -65,12 +60,14 @@ public class Joke implements Serializable {
 	public Set<JokeFlag> getJokeFlags() { return jokeFlags; }
 	public void setJokeFlags(Set<JokeFlag> jokeFlags) { this.jokeFlags = jokeFlags; }
 
-	// helpers para la relación
-	public void addFlag(Flag flag) {
-		JokeFlag jf = new JokeFlag(this, flag);
+	// helpers para manejar la asociación
+	public void addFlag(Flag f) {
+		JokeFlag jf = new JokeFlag(this, f);
 		jokeFlags.add(jf);
+		f.getJokeFlags().add(jf);
 	}
-	public void removeFlag(Flag flag) {
-		jokeFlags.removeIf(jf -> jf.getFlag().equals(flag));
+	public void removeFlag(Flag f) {
+		jokeFlags.removeIf(jf -> jf.getFlag().equals(f));
+		f.getJokeFlags().removeIf(jf -> jf.getJoke().equals(this));
 	}
 }

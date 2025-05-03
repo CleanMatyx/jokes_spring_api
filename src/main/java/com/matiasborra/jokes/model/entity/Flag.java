@@ -1,3 +1,4 @@
+// src/main/java/com/matiasborra/jokes/model/entity/Flag.java
 package com.matiasborra.jokes.model.entity;
 
 import jakarta.persistence.*;
@@ -10,9 +11,8 @@ import java.util.Set;
 public class Flag implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", updatable = false, nullable = false)
 	private Long id;
 
 	@Column(name = "flag", nullable = false)
@@ -25,6 +25,7 @@ public class Flag implements Serializable {
 	private Set<JokeFlag> jokeFlags = new HashSet<>();
 
 	public Flag() {}
+	// getters + setters
 
 	public Long getId() { return id; }
 	public void setId(Long id) { this.id = id; }
@@ -37,12 +38,4 @@ public class Flag implements Serializable {
 
 	public Set<JokeFlag> getJokeFlags() { return jokeFlags; }
 	public void setJokeFlags(Set<JokeFlag> jokeFlags) { this.jokeFlags = jokeFlags; }
-
-	public void addJoke(Joke joke) {
-		JokeFlag jf = new JokeFlag(joke, this);
-		jokeFlags.add(jf);
-	}
-	public void removeJoke(Joke joke) {
-		jokeFlags.removeIf(jf -> jf.getJoke().equals(joke));
-	}
 }

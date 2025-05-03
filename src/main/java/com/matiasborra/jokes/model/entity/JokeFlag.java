@@ -1,3 +1,4 @@
+// src/main/java/com/matiasborra/jokes/model/entity/JokeFlag.java
 package com.matiasborra.jokes.model.entity;
 
 import jakarta.persistence.*;
@@ -6,7 +7,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "jokes_flags", schema = "public")
 public class JokeFlag implements Serializable {
-
     @EmbeddedId
     private JokeFlagKey id;
 
@@ -21,12 +21,12 @@ public class JokeFlag implements Serializable {
     private Flag flag;
 
     public JokeFlag() {}
-
     public JokeFlag(Joke joke, Flag flag) {
         this.joke = joke;
         this.flag = flag;
-        this.id = new JokeFlagKey(joke.getId(), flag.getId());
+        this.id   = new JokeFlagKey(joke.getId(), flag.getId());
     }
+    // getters / setters
 
     public JokeFlagKey getId() { return id; }
     public void setId(JokeFlagKey id) { this.id = id; }

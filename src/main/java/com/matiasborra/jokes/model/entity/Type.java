@@ -1,3 +1,4 @@
+// src/main/java/com/matiasborra/jokes/model/entity/Type.java
 package com.matiasborra.jokes.model.entity;
 
 import jakarta.persistence.*;
@@ -8,11 +9,8 @@ import java.util.Set;
 @Entity
 @Table(name = "types", schema = "public")
 public class Type implements Serializable {
-	private static final long serialVersionUID = 1L;
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", updatable = false, nullable = false)
 	private Long id;
 
 	@Column(name = "type", nullable = false)
@@ -22,6 +20,7 @@ public class Type implements Serializable {
 	private Set<Joke> jokes = new HashSet<>();
 
 	public Type() {}
+	// getters + setters
 
 	public Long getId() { return id; }
 	public void setId(Long id) { this.id = id; }
@@ -31,13 +30,4 @@ public class Type implements Serializable {
 
 	public Set<Joke> getJokes() { return jokes; }
 	public void setJokes(Set<Joke> jokes) { this.jokes = jokes; }
-
-	public void addJoke(Joke joke) {
-		jokes.add(joke);
-		joke.setType(this);
-	}
-	public void removeJoke(Joke joke) {
-		jokes.remove(joke);
-		joke.setType(null);
-	}
 }
