@@ -12,4 +12,5 @@ public interface IJokeService {
     void delete(Long id);
     List<JokeDTO> findAllWithPV();
     List<JokeDTO> filterByText(String q);
+
 }

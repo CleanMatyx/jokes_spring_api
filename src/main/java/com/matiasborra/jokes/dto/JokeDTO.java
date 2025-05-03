@@ -25,6 +25,15 @@ public class JokeDTO {
     // Teléfonos del programa
     private List<String> telefonos;
 
+    private PrimeraVezDTO primeraVez;
+
+    public PrimeraVezDTO getPrimeraVez() {
+        return primeraVez;
+    }
+    public void setPrimeraVez(PrimeraVezDTO primeraVez) {
+        this.primeraVez = primeraVez;
+    }
+
     // --- getters / setters ---
 
     public Long getId() {

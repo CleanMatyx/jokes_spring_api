@@ -46,9 +46,29 @@
                     <li th:each="f : ${j.flags}" th:text="${f.flag}"></li>
                 </ul>
             </td>
-            <td>
-                <a th:href="@{/jokes/{id}(id=${j.id})}" class="btn btn-sm btn-warning">Editar</a>
-                <a th:href="@{/jokes/delete/{id}(id=${j.id})}" class="btn btn-sm btn-danger">Borrar</a>
+            <td class="d-flex flex-wrap gap-1">
+                <!-- CRUD de chistes -->
+                <a th:href="@{/jokes/{id}(id=${j.id})}"
+                   class="btn btn-sm btn-warning">
+                    ✎ Editar
+                </a>
+                <a th:href="@{/jokes/delete/{id}(id=${j.id})}"
+                   class="btn btn-sm btn-danger"
+                   onclick="return confirm('¿Seguro que quieres borrar este chiste?');">
+                    🗑️ Borrar
+                </a>
+
+                <!-- Gestión de Primera Vez -->
+                <a th:if="${j.primeraVez != null}"
+                   th:href="@{/primera_vez/edit/{jokeId}(jokeId=${j.id})}"
+                   class="btn btn-sm btn-outline-primary">
+                    ✎ Editar emisión
+                </a>
+                <a th:if="${j.primeraVez == null}"
+                   th:href="@{/primera_vez/new/{jokeId}(jokeId=${j.id})}"
+                   class="btn btn-sm btn-outline-success">
+                    + Añadir emisión
+                </a>
             </td>
         </tr>
         </tbody>

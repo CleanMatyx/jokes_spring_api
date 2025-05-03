@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+  <title>Primera Emisión</title>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<div class="container mt-4">
+  <h1>Primera Vez</h1>
+  <a th:href="@{/primera_vez/new}" class="btn btn-primary mb-3">Nueva emisión</a>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>ID</th><th>Joke</th><th>Programa</th><th>Fecha</th><th>Teléfonos</th><th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pv : ${entries}">
+      <td th:text="${pv.id}"></td>
+      <td th:text="${pv.jokeId} + ' – ' + pv.text1"></td>
+      <td th:text="${pv.programa}"></td>
+      <td th:text="${pv.fechaEmision}"></td>
+      <td>
+        <span th:each="t : ${pv.telefonos}" th:text="${t.numero} + ' '"></span>
+      </td>
+      <td>
+        <a th:href="@{/primera_vez/{id}(id=${pv.id})}" class="btn btn-sm btn-secondary">✎</a>
+        <a th:href="@{/primera_vez/delete/{id}(id=${pv.id})}"
+           class="btn btn-sm btn-danger"
+           onclick="return confirm('¿Borrar?');">🗑</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

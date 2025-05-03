@@ -22,33 +22,61 @@ public class PrimeraVezWebController {
         this.jokeService = jokeService;
     }
 
+    /** Listado de todas las primeras emisiones **/
+    @GetMapping
+    public String listAll(Model model) {
+        model.addAttribute("entries", pvService.findAll());
+        return "primera_vez/list";
+    }
+
+    /** Formulario para crear una nueva emisión para un chiste dado **/
     @GetMapping("/new/{jokeId}")
     public String newForm(@PathVariable Long jokeId, Model model) {
-        model.addAttribute("primeraVez", new PrimeraVezDTO());
+        PrimeraVezDTO pv = new PrimeraVezDTO();
+        pv.setJokeId(jokeId);
+        model.addAttribute("pv", pv);
         model.addAttribute("joke", jokeService.findById(jokeId));
         return "primera_vez/form";
     }
 
-    @GetMapping("/edit/{jokeId}")
-    public String editForm(@PathVariable Long jokeId, Model model) {
-        PrimeraVezDTO pv = pvService.findByJokeId(jokeId);
-        if (pv == null) {
-            return "redirect:/primera_vez/new/" + jokeId;
-        }
-        model.addAttribute("primeraVez", pv);
-        model.addAttribute("joke", jokeService.findById(jokeId));
-        return "primera_vez/form";
-    }
-
-    @PostMapping("/save")
-    public String save(@ModelAttribute("primeraVez") PrimeraVezDTO dto) {
+    /** Procesa el guardado de una nueva emisión **/
+    @PostMapping("/new/{jokeId}")
+    public String create(
+            @PathVariable Long jokeId,
+            @ModelAttribute("pv") PrimeraVezDTO dto
+    ) {
+        dto.setJokeId(jokeId);
         pvService.save(dto);
-        return "redirect:/jokes";
+        return "redirect:/primera_vez";
     }
 
-    @GetMapping("/delete/{jokeId}")
-    public String delete(@PathVariable Long jokeId) {
-        pvService.deleteByJokeId(jokeId);
-        return "redirect:/jokes";
+    /** Formulario para editar una emisión existente **/
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable Long id, Model model) {
+        PrimeraVezDTO pv = pvService.findById(id);
+        if (pv == null) {
+            return "redirect:/primera_vez";
+        }
+        model.addAttribute("pv", pv);
+        model.addAttribute("joke", jokeService.findById(pv.getJokeId()));
+        return "primera_vez/form";
+    }
+
+    /** Procesa la actualización de una emisión **/
+    @PostMapping("/edit/{id}")
+    public String update(
+            @PathVariable Long id,
+            @ModelAttribute("pv") PrimeraVezDTO dto
+    ) {
+        dto.setId(id);
+        pvService.save(dto);
+        return "redirect:/primera_vez";
+    }
+
+    /** Borra una emisión por su ID **/
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        pvService.delete(id);
+        return "redirect:/primera_vez";
     }
 }

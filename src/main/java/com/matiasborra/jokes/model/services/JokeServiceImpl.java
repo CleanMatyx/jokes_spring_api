@@ -3,7 +3,14 @@ package com.matiasborra.jokes.model.services;
 import com.matiasborra.jokes.dto.FlagDTO;
 import com.matiasborra.jokes.dto.JokeDTO;
 import com.matiasborra.jokes.model.dao.*;
-import com.matiasborra.jokes.model.entity.*;
+import com.matiasborra.jokes.model.entity.Joke;
+import com.matiasborra.jokes.model.entity.JokeFlag;
+import com.matiasborra.jokes.model.entity.PrimeraVez;
+import com.matiasborra.jokes.model.entity.Telefono;
+import com.matiasborra.jokes.model.entity.Category;
+import com.matiasborra.jokes.model.entity.Type;
+import com.matiasborra.jokes.model.entity.Language;
+import com.matiasborra.jokes.model.entity.Flag;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +45,7 @@ public class JokeServiceImpl implements IJokeService {
         this.mapper       = mapper;
     }
 
+    /** Listar todos los chistes (para API y Web) **/
     @Override
     public List<JokeDTO> findAll() {
         return jokeRepo.findAllByOrderByIdAsc()
@@ -55,23 +63,44 @@ public class JokeServiceImpl implements IJokeService {
 
     @Override
     public JokeDTO create(JokeDTO dto) {
-        // 1) cargar referencias
-        Category category = categoryRepo.findById(dto.getCategory().getId())
+        Joke j = buildEntityFromDto(dto, new Joke());
+        Joke saved = jokeRepo.save(j);
+        return toDto(saved);
+    }
+
+    @Override
+    public JokeDTO update(Long id, JokeDTO dto) {
+        Joke existing = jokeRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Joke not found"));
+        Joke j = buildEntityFromDto(dto, existing);
+        Joke saved = jokeRepo.save(j);
+        return toDto(saved);
+    }
+
+    @Override
+    public void delete(Long id) {
+        jokeRepo.deleteById(id);
+    }
+
+    /** Construye o actualiza la entidad Joke a partir de un DTO **/
+    private Joke buildEntityFromDto(JokeDTO dto, Joke joke) {
+        // actualizar texto
+        joke.setText1(dto.getText1());
+        joke.setText2(dto.getText2());
+
+        // categoría, tipo, idioma
+        Category cat = categoryRepo.findById(dto.getCategory().getId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         Type type = typeRepo.findById(dto.getType().getId())
                 .orElseThrow(() -> new RuntimeException("Type not found"));
-        Language language = languageRepo.findById(dto.getLanguage().getId())
+        Language lang = languageRepo.findById(dto.getLanguage().getId())
                 .orElseThrow(() -> new RuntimeException("Language not found"));
-
-        // 2) construir entidad
-        Joke joke = new Joke();
-        joke.setText1(dto.getText1());
-        joke.setText2(dto.getText2());
-        joke.setCategory(category);
+        joke.setCategory(cat);
         joke.setType(type);
-        joke.setLanguage(language);
+        joke.setLanguage(lang);
 
-        // 3) asociar flags por IDs
+        // flags
+        joke.getJokeFlags().clear();
         if (dto.getFlagIds() != null) {
             for (Long fid : dto.getFlagIds()) {
                 Flag flag = flagRepo.findById(fid)
@@ -83,104 +112,61 @@ public class JokeServiceImpl implements IJokeService {
             }
         }
 
-        // 4) guardar y devolver DTO
-        Joke saved = jokeRepo.save(joke);
-        return toDto(saved);
+        return joke;
     }
 
-    @Override
-    public JokeDTO update(Long id, JokeDTO dto) {
-        Joke existing = jokeRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Joke not found"));
-
-        // actualizar texto
-        existing.setText1(dto.getText1());
-        existing.setText2(dto.getText2());
-
-        // si cambió categoría / tipo / idioma, recargarlas
-        if (!existing.getCategory().getId().equals(dto.getCategory().getId())) {
-            Category category = categoryRepo.findById(dto.getCategory().getId())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
-            existing.setCategory(category);
-        }
-        if (!existing.getType().getId().equals(dto.getType().getId())) {
-            Type type = typeRepo.findById(dto.getType().getId())
-                    .orElseThrow(() -> new RuntimeException("Type not found"));
-            existing.setType(type);
-        }
-        if (!existing.getLanguage().getId().equals(dto.getLanguage().getId())) {
-            Language language = languageRepo.findById(dto.getLanguage().getId())
-                    .orElseThrow(() -> new RuntimeException("Language not found"));
-            existing.setLanguage(language);
-        }
-
-        // reemplazar por completo las flags
-        existing.getJokeFlags().clear();
-        if (dto.getFlagIds() != null) {
-            for (Long fid : dto.getFlagIds()) {
-                Flag flag = flagRepo.findById(fid)
-                        .orElseThrow(() -> new RuntimeException("Flag not found"));
-                JokeFlag jf = new JokeFlag();
-                jf.setJoke(existing);
-                jf.setFlag(flag);
-                existing.getJokeFlags().add(jf);
-            }
-        }
-
-        Joke saved = jokeRepo.save(existing);
-        return toDto(saved);
-    }
-
-    @Override
-    public void delete(Long id) {
-        jokeRepo.deleteById(id);
-    }
-
-    /**
-     * Helper: convierte entidad a DTO y rellena tanto flags como flagIds
-     */
+    /** Mapea básica a DTO (texto, relaciones y flags) **/
     private JokeDTO toDto(Joke j) {
         JokeDTO dto = mapper.map(j, JokeDTO.class);
 
-        // flags completas para API
+        // flags para API
         List<FlagDTO> flags = j.getJokeFlags().stream()
                 .map(jf -> mapper.map(jf.getFlag(), FlagDTO.class))
                 .collect(toList());
         dto.setFlags(flags);
 
-        // ids para Thymeleaf
-        List<Long> ids = j.getJokeFlags().stream()
-                .map(jf -> jf.getFlag().getId())
+        // flagIds para Web
+        List<Long> ids = flags.stream()
+                .map(FlagDTO::getId)
                 .collect(toList());
         dto.setFlagIds(ids);
 
         return dto;
     }
 
-    // inyecta IJokeDAO…
+    /** --------------------------------------------------------
+     *  Métodos extra para “Jokes con PrimeraVez y Teléfonos”
+     *  -------------------------------------------------------*/
+
     @Override
     public List<JokeDTO> findAllWithPV() {
         return jokeRepo.findAllWithPrimeraVezAndTelefonos()
                 .stream()
-                .map(this::toJokeWithPVDto)
+                .map(this::toDtoWithPV)
                 .collect(toList());
     }
 
-    private JokeDTO toJokeWithPVDto(Joke j) {
-        JokeDTO dto = mapper.map(j, JokeDTO.class);
-        if (j.getPrimeraVez() != null) {
-            PrimeraVez pv = j.getPrimeraVez();
+    /** Concatena al DTO los datos de primera vez y teléfonos **/
+    private JokeDTO toDtoWithPV(Joke j) {
+        // primero el mapeo común
+        JokeDTO dto = toDto(j);
+
+        // si existe primeraVez, lo llenamos
+        PrimeraVez pv = j.getPrimeraVez();
+        if (pv != null) {
             dto.setPrograma(pv.getPrograma());
             dto.setFechaEmision(pv.getFechaEmision());
-            dto.setTelefonos(
-                    pv.getTelefonos().stream()
-                            .map(Telefono::getNumero)
-                            .collect(toList())
-            );
+            List<String> tels = pv.getTelefonos().stream()
+                    .map(Telefono::getNumero)
+                    .collect(toList());
+            dto.setTelefonos(tels);
         }
         return dto;
     }
 
+    /**
+     *  Filtrar por texto1 (no case sensitive)
+     */
     @Override
     public List<JokeDTO> filterByText(String text) {
         return jokeRepo.findByText1ContainingIgnoreCase(text)
