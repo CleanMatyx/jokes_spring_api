@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${language.id} != null ? 'Editar idioma' : 'Nuevo idioma'">Formulario</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="container mt-4">
+    <h1 th:text="${language.id} != null ? 'Editar idioma' : 'Nuevo idioma'">Formulario</h1>
+
+    <!-- FORMULARIO CREAR -->
+    <form th:if="${language.id} == null"
+          th:action="@{/languages}"
+          th:object="${language}"
+          method="post">
+        <div class="mb-3">
+            <label th:for="'language-new'" class="form-label">Nombre</label>
+            <input type="text"
+                   th:id="'language-new'"
+                   th:field="*{language}"
+                   class="form-control"
+                   placeholder="Introduce el idioma"/>
+            <div class="text-danger" th:errors="*{language}"></div>
+        </div>
+        <button class="btn btn-success">Guardar</button>
+        <a th:href="@{/languages}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+    <!-- FORMULARIO EDICIÓN -->
+    <form th:if="${language.id} != null"
+          th:action="@{/languages/{id}(id=${language.id})}"
+          th:object="${language}"
+          method="post">
+        <div class="mb-3">
+            <label th:for="${'language-' + language.id}" class="form-label">Nombre</label>
+            <input type="text"
+                   th:id="${'language-' + language.id}"
+                   th:field="*{language}"
+                   class="form-control"
+                   placeholder="Introduce el idioma"/>
+            <div class="text-danger" th:errors="*{language}"></div>
+        </div>
+        <button class="btn btn-success">Guardar</button>
+        <a th:href="@{/languages}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

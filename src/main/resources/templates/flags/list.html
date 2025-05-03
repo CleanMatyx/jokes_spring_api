@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Listado de Flags</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="container mt-4">
+    <h1>Flags</h1>
+    <a th:href="@{/flags/new}" class="btn btn-success mb-3">Nueva Flag</a>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Flag</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="flag : ${flags}"
+            th:id="${'flag-' + flag.id}">
+            <td th:text="${flag.id}">1</td>
+            <td th:text="${flag.flag}">Ejemplo</td>
+            <td>
+                <a th:href="@{/flags/edit/{id}(id=${flag.id})}"
+                   class="btn btn-primary btn-sm">
+                    Editar
+                </a>
+                <!-- aquí sólo usamos onclick estático, sin expresiones Thymeleaf -->
+                <a th:href="@{/flags/delete/{id}(id=${flag.id})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('¿Seguro que quieres eliminar esta flag?');">
+                    Eliminar
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

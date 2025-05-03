@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Listado de Tipos</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="container mt-4">
+    <h1>Tipos</h1>
+    <a th:href="@{/types/new}" class="btn btn-success mb-3">Nuevo Tipo</a>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="type : ${types}"
+            th:id="${'type-' + type.id}">
+            <td th:text="${type.id}">1</td>
+            <td th:text="${type.type}">Ejemplo</td>
+            <td>
+                <a th:href="@{/types/{id}(id=${type.id})}"
+                   class="btn btn-primary btn-sm">Editar</a>
+                <a th:href="@{/types/delete/{id}(id=${type.id})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('¿Eliminar este tipo?');">
+                    Eliminar
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

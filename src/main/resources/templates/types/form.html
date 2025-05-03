@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${type.id} != null ? 'Editar tipo' : 'Nuevo tipo'">
+        Formulario Tipo
+    </title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="container mt-4">
+    <h1 th:text="${type.id} != null ? 'Editar tipo' : 'Nuevo tipo'">
+        Formulario Tipo
+    </h1>
+
+    <!-- CREAR -->
+    <form th:if="${type.id} == null"
+          th:action="@{/types}"
+          th:object="${type}"
+          method="post">
+        <div class="mb-3">
+            <label th:for="'type-new'" class="form-label">Tipo</label>
+            <input type="text"
+                   th:id="'type-new'"
+                   th:field="*{type}"
+                   class="form-control"
+                   placeholder="Introduce el tipo"/>
+            <div class="text-danger" th:errors="*{type}"></div>
+        </div>
+        <button class="btn btn-success">Guardar</button>
+        <a th:href="@{/types}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+    <!-- EDITAR -->
+    <form th:if="${type.id} != null"
+          th:action="@{/types/{id}(id=${type.id})}"
+          th:object="${type}"
+          method="post">
+        <div class="mb-3">
+            <label th:for="${'type-' + type.id}" class="form-label">Tipo</label>
+            <input type="text"
+                   th:id="${'type-' + type.id}"
+                   th:field="*{type}"
+                   class="form-control"
+                   placeholder="Introduce el tipo"/>
+            <div class="text-danger" th:errors="*{type}"></div>
+        </div>
+        <button class="btn btn-success">Guardar</button>
+        <a th:href="@{/types}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

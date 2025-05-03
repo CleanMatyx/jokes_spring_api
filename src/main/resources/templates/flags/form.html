@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${flag.id} != null ? 'Editar Flag' : 'Nueva Flag'">Formulario Flag</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="container mt-4">
+    <h1 th:text="${flag.id} != null ? 'Editar Flag' : 'Nueva Flag'">Formulario Flag</h1>
+
+    <!-- CREAR -->
+    <form th:if="${flag.id} == null"
+          th:action="@{/flags}"
+          th:object="${flag}"
+          method="post">
+        <div class="mb-3">
+            <label th:for="'flag-new'" class="form-label">Flag</label>
+            <input type="text"
+                   th:id="'flag-new'"
+                   th:field="*{flag}"
+                   class="form-control"
+                   placeholder="Introduce la flag"/>
+            <div class="text-danger" th:errors="*{flag}"></div>
+        </div>
+        <button class="btn btn-success">Guardar</button>
+        <a th:href="@{/flags}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+    <!-- EDITAR -->
+    <form th:if="${flag.id} != null"
+          th:action="@{/flags/{id}(id=${flag.id})}"
+          th:object="${flag}"
+          method="post">
+        <div class="mb-3">
+            <label th:for="${'flag-' + flag.id}" class="form-label">Flag</label>
+            <input type="text"
+                   th:id="${'flag-' + flag.id}"
+                   th:field="*{flag}"
+                   class="form-control"
+                   placeholder="Introduce la flag"/>
+            <div class="text-danger" th:errors="*{flag}"></div>
+        </div>
+        <button class="btn btn-success">Guardar</button>
+        <a th:href="@{/flags}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

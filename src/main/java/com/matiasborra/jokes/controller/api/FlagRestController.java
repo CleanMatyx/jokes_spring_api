@@ -1,4 +1,4 @@
-package com.matiasborra.jokes.controller;
+package com.matiasborra.jokes.controller.api;
 
 import com.matiasborra.jokes.dto.FlagDTO;
 import com.matiasborra.jokes.model.services.IFlagService;

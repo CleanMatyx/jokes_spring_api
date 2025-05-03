@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Listado de chistes</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container mt-4">
+    <h1>Listado de chistes</h1>
+    <a class="btn btn-primary mb-3" th:href="@{/jokes/new}">Nuevo chiste</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Texto 1</th>
+            <th>Texto 2</th>
+            <th>Categoría</th>
+            <th>Tipo</th>
+            <th>Idioma</th>
+            <th>Flags</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="j : ${jokes}">
+            <td th:text="${j.id}"></td>
+            <td th:text="${j.text1}"></td>
+            <td th:text="${j.text2}"></td>
+            <td th:text="${j.category.category}"></td>
+            <td th:text="${j.type.type}"></td>
+            <td th:text="${j.language.language}"></td>
+            <td>
+                <ul class="mb-0">
+                    <li th:each="f : ${j.flags}" th:text="${f.flag}"></li>
+                </ul>
+            </td>
+            <td>
+                <a th:href="@{/jokes/{id}(id=${j.id})}" class="btn btn-sm btn-warning">Editar</a>
+                <a th:href="@{/jokes/delete/{id}(id=${j.id})}" class="btn btn-sm btn-danger">Borrar</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

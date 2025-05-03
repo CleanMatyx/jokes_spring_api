@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${category.id} != null ? 'Editar categoría' : 'Nueva categoría'">Formulario</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="container mt-4">
+    <h1 th:text="${category.id} != null ? 'Editar categoría' : 'Nueva categoría'">Formulario</h1>
+
+    <!-- FORMULARIO NUEVO -->
+    <form th:if="${category.id} == null"
+          th:action="@{/categories}"
+          th:object="${category}"
+          method="post">
+        <div class="mb-3">
+            <label th:for="'category-new'" class="form-label">Nombre</label>
+            <input type="text"
+                   th:id="'category-new'"
+                   th:field="*{category}"
+                   class="form-control"
+                   placeholder="Introduce el nombre"/>
+            <div class="text-danger" th:errors="*{category}"/>
+        </div>
+        <button class="btn btn-success">Guardar</button>
+        <a th:href="@{/categories}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+    <!-- FORMULARIO EDICIÓN -->
+    <form th:if="${category.id} != null"
+          th:action="@{/categories/{id}(id=${category.id})}"
+          th:object="${category}"
+          method="post">
+        <div class="mb-3">
+            <label th:for="${'category-' + category.id}" class="form-label">Nombre</label>
+            <input type="text"
+                   th:id="${'category-' + category.id}"
+                   th:field="*{category}"
+                   class="form-control"
+                   placeholder="Introduce el nombre"/>
+            <div class="text-danger" th:errors="*{category}"/>
+        </div>
+        <button class="btn btn-success">Guardar</button>
+        <a th:href="@{/categories}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
