@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/jokes")
@@ -35,9 +36,22 @@ public class JokeWebController {
         this.flagService = flagService;
     }
 
+//    @GetMapping
+//    public String list(Model model) {
+//        model.addAttribute("jokes", jokeService.findAll());
+//        return "jokes/list";
+//    }
+
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("jokes", jokeService.findAll());
+    public String list(@RequestParam(required = false) String q, Model model) {
+        List<JokeDTO> jokes;
+        if (q != null && !q.isBlank()) {
+            jokes = jokeService.filterByText(q);
+        } else {
+            jokes = jokeService.findAll();
+        }
+        model.addAttribute("jokes", jokes);
+        model.addAttribute("q", q);
         return "jokes/list";
     }
 
@@ -89,5 +103,19 @@ public class JokeWebController {
     public String delete(@PathVariable Long id) {
         jokeService.delete(id);
         return "redirect:/jokes";
+    }
+
+    @GetMapping("/with-pv")
+    public String listWithPV(@RequestParam(required=false) String q, Model model) {
+        List<JokeDTO> jokes = jokeService.findAllWithPV();
+        if (q != null && !q.isBlank()) {
+            String lower = q.toLowerCase();
+            jokes = jokes.stream()
+                    .filter(j-> j.getText1().toLowerCase().contains(lower))
+                    .collect(Collectors.toList());
+        }
+        model.addAttribute("jokes", jokes);
+        model.addAttribute("q", q);
+        return "jokes/list-with-pv";
     }
 }

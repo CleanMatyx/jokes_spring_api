@@ -1,5 +1,6 @@
 package com.matiasborra.jokes.dto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,13 @@ public class JokeDTO {
 
     // Para Thymeleaf → bind de los checkbox con los IDs
     private List<Long> flagIds = new ArrayList<>();
+
+    // Datos de “primera vez”
+    private String programa;
+    private LocalDateTime fechaEmision;
+
+    // Teléfonos del programa
+    private List<String> telefonos;
 
     // --- getters / setters ---
 
@@ -73,5 +81,29 @@ public class JokeDTO {
     }
     public void setFlagIds(List<Long> flagIds) {
         this.flagIds = flagIds;
+    }
+
+    public String getPrograma() {
+        return programa;
+    }
+
+    public void setPrograma(String programa) {
+        this.programa = programa;
+    }
+
+    public LocalDateTime getFechaEmision() {
+        return fechaEmision;
+    }
+
+    public void setFechaEmision(LocalDateTime fechaEmision) {
+        this.fechaEmision = fechaEmision;
+    }
+
+    public List<String> getTelefonos() {
+        return telefonos;
+    }
+
+    public void setTelefonos(List<String> telefonos) {
+        this.telefonos = telefonos;
     }
 }

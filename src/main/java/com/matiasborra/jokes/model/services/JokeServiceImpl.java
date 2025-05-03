@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @Transactional
 public class JokeServiceImpl implements IJokeService {
@@ -41,7 +43,7 @@ public class JokeServiceImpl implements IJokeService {
         return jokeRepo.findAllByOrderByIdAsc()
                 .stream()
                 .map(this::toDto)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override
@@ -143,15 +145,47 @@ public class JokeServiceImpl implements IJokeService {
         // flags completas para API
         List<FlagDTO> flags = j.getJokeFlags().stream()
                 .map(jf -> mapper.map(jf.getFlag(), FlagDTO.class))
-                .collect(Collectors.toList());
+                .collect(toList());
         dto.setFlags(flags);
 
         // ids para Thymeleaf
         List<Long> ids = j.getJokeFlags().stream()
                 .map(jf -> jf.getFlag().getId())
-                .collect(Collectors.toList());
+                .collect(toList());
         dto.setFlagIds(ids);
 
         return dto;
+    }
+
+    // inyecta IJokeDAO…
+    @Override
+    public List<JokeDTO> findAllWithPV() {
+        return jokeRepo.findAllWithPrimeraVezAndTelefonos()
+                .stream()
+                .map(this::toJokeWithPVDto)
+                .collect(toList());
+    }
+
+    private JokeDTO toJokeWithPVDto(Joke j) {
+        JokeDTO dto = mapper.map(j, JokeDTO.class);
+        if (j.getPrimeraVez() != null) {
+            PrimeraVez pv = j.getPrimeraVez();
+            dto.setPrograma(pv.getPrograma());
+            dto.setFechaEmision(pv.getFechaEmision());
+            dto.setTelefonos(
+                    pv.getTelefonos().stream()
+                            .map(Telefono::getNumero)
+                            .collect(toList())
+            );
+        }
+        return dto;
+    }
+
+    @Override
+    public List<JokeDTO> filterByText(String text) {
+        return jokeRepo.findByText1ContainingIgnoreCase(text)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 }

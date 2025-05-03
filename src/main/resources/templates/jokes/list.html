@@ -6,11 +6,19 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <div class="container mt-4">
     <h1>Listado de chistes</h1>
     <a class="btn btn-primary mb-3" th:href="@{/jokes/new}">Nuevo chiste</a>
+
+    <!-- buscador opcional -->
+    <form th:action="@{/jokes}" method="get" class="mb-3">
+        <div class="input-group">
+            <input name="q" th:value="${q}" class="form-control" placeholder="Buscar texto1…"/>
+            <button class="btn btn-outline-secondary">Buscar</button>
+        </div>
+    </form>
 
     <table class="table table-striped">
         <thead>
@@ -47,6 +55,6 @@
     </table>
 </div>
 
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

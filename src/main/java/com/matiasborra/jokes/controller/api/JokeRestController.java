@@ -45,4 +45,9 @@ public class JokeRestController {
         jokeService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/with-pv")
+    public ResponseEntity<List<JokeDTO>> getAllWithPrimeraVez() {
+        return ResponseEntity.ok(jokeService.findAllWithPV());
+    }
 }

@@ -10,4 +10,6 @@ public interface IJokeService {
     JokeDTO create(JokeDTO dto);
     JokeDTO update(Long id, JokeDTO dto);
     void delete(Long id);
+    List<JokeDTO> findAllWithPV();
+    List<JokeDTO> filterByText(String q);
 }

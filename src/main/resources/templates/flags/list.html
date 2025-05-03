@@ -6,7 +6,7 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 <div class="container mt-4">
     <h1>Flags</h1>
     <a th:href="@{/flags/new}" class="btn btn-success mb-3">Nueva Flag</a>
@@ -39,6 +39,6 @@
         </tbody>
     </table>
 </div>
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

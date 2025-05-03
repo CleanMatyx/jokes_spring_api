@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Listado de chistes</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<div class="container mt-4">
+
+    <h1>Chistes con Primera Emisión</h1>
+
+    <!-- buscador opcional -->
+    <form th:action="@{/jokes/with-pv}" method="get" class="mb-3">
+        <div class="input-group">
+            <input name="q" th:value="${q}" class="form-control" placeholder="Buscar texto1…"/>
+            <button class="btn btn-outline-secondary">Buscar</button>
+        </div>
+    </form>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Texto</th>
+            <th>Programa</th>
+            <th>Fecha</th>
+            <th>Teléfonos</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="j : ${jokes}">
+            <td th:text="${j.id}">1</td>
+            <td>
+                <b th:text="${j.text1}">Texto1</b><br/>
+                <small th:text="${j.text2}">Texto2</small>
+            </td>
+            <td th:text="${j.programa}">Programa</td>
+            <td th:text="${j.fechaEmision}">2025-05-03T21:30</td>
+            <td>
+            <span th:each="tel : ${j.telefonos}">
+              <span th:text="${tel}">123456789</span><span> </span>
+            </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

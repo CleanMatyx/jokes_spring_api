@@ -6,7 +6,7 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <div class="container mt-4">
     <h1 th:text="${joke.id} != null ? 'Editar chiste' : 'Nuevo chiste'"></h1>
@@ -156,6 +156,6 @@
     </form>
 </div>
 
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
