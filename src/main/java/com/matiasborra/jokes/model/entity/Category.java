@@ -25,7 +25,10 @@ public class Category implements Serializable {
 	@Column(name = "category", nullable = false)
 	private String category;
 
-	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+//	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private Set<Joke> jokes = new HashSet<>();
+
+	@OneToMany(mappedBy = "category", cascade = CascadeType.PERSIST, orphanRemoval = true)
 	private Set<Joke> jokes = new HashSet<>();
 
 	/**

@@ -15,3 +15,5 @@ CREATE TABLE telefonos (
   primera_vez_id BIGINT NOT NULL,
   CONSTRAINT fk_tel_pv FOREIGN KEY(primera_vez_id) REFERENCES primera_vez(id)
 );
+
+

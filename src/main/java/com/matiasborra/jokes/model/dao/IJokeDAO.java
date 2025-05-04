@@ -56,15 +56,16 @@ public interface IJokeDAO extends JpaRepository<Joke, Long> {
      *
      * @return Lista de entidades Joke ordenadas por ID
      */
-    @EntityGraph(attributePaths = {
-            "category",
-            "type",
-            "language",
-            "jokeFlags",
-            "jokeFlags.flag",
-            "primeraVez",
-            "primeraVez.telefonos"
-    })
+    @Query("select j from Joke j " +
+            "left join fetch j.category " +
+            "left join fetch j.type " +
+            "left join fetch j.language " +
+            "left join fetch j.jokeFlags jf " +
+            "left join fetch jf.flag " +
+            "left join fetch j.primeraVez pv " +
+            "left join fetch pv.telefonos " +
+            "order by j.id")
+    List<Joke> findAllByOrderByIdAscWithNulls();
     List<Joke> findAllByOrderByIdAsc();
 
     /**

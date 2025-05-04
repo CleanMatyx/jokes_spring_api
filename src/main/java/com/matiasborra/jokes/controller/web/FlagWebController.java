@@ -116,7 +116,7 @@ public class FlagWebController {
      * @param attrs Atributos para redirección
      * @return Redirección al listado de banderas
      */
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String delete(@PathVariable Long id, RedirectAttributes attrs) {
         flagService.delete(id);
         attrs.addFlashAttribute("success", "Flag borrada correctamente");

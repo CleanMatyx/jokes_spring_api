@@ -27,7 +27,7 @@ public class Flag implements Serializable {
 	@Column(name = "flag", nullable = false)
 	private String flag;
 
-	@OneToMany(mappedBy = "flag", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "flag", cascade = CascadeType.PERSIST, orphanRemoval = true)
 	private Set<JokeFlag> jokeFlags = new HashSet<>();
 
 	/**

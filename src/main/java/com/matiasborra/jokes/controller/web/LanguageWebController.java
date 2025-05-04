@@ -92,7 +92,7 @@ public class LanguageWebController {
     /**
      * Elimina un idioma por su ID.
      */
-    @GetMapping("/{id}/delete")
+    @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
         languageService.delete(id);
         return "redirect:/languages";

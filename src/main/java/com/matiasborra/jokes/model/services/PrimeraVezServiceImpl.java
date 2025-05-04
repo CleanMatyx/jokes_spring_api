@@ -15,14 +15,30 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.stream.Collectors;
 import java.util.List;
 
+/**
+ * Implementación del servicio IPrimeraVezService.
+ * Proporciona métodos para gestionar las entidades de "Primera Vez", incluyendo operaciones CRUD.
+ * También maneja relaciones con otras entidades como chistes y teléfonos.
+ *
+ * @author Matias
+ */
 @Service
 @Transactional
 public class PrimeraVezServiceImpl implements IPrimeraVezService {
+
     private final IPrimeraVezDAO pvRepo;
     private final ITelefonoDAO telRepo;
     private final IJokeDAO jokeRepo;
     private final ModelMapper mapper;
 
+    /**
+     * Constructor de PrimeraVezServiceImpl.
+     *
+     * @param pvRepo   Repositorio de "Primera Vez"
+     * @param telRepo  Repositorio de teléfonos
+     * @param jokeRepo Repositorio de chistes
+     * @param mapper   Mapper para convertir entre entidades y DTOs
+     */
     public PrimeraVezServiceImpl(IPrimeraVezDAO pvRepo, ITelefonoDAO telRepo,
                                  IJokeDAO jokeRepo, ModelMapper mapper) {
         this.pvRepo = pvRepo;
@@ -31,6 +47,12 @@ public class PrimeraVezServiceImpl implements IPrimeraVezService {
         this.mapper = mapper;
     }
 
+    /**
+     * Busca una entidad de "Primera Vez" por el ID del chiste asociado.
+     *
+     * @param jokeId ID del chiste
+     * @return Entidad de "Primera Vez" en formato DTO
+     */
     @Override
     public PrimeraVezDTO findByJokeId(Long jokeId) {
         return pvRepo.findByJoke_Id(jokeId)
@@ -38,6 +60,12 @@ public class PrimeraVezServiceImpl implements IPrimeraVezService {
                 .orElse(null);
     }
 
+    /**
+     * Busca una entidad de "Primera Vez" por su ID.
+     *
+     * @param id ID de la entidad
+     * @return Entidad de "Primera Vez" en formato DTO
+     */
     @Override
     public PrimeraVezDTO findById(Long id) {
         return pvRepo.findById(id)
@@ -45,56 +73,31 @@ public class PrimeraVezServiceImpl implements IPrimeraVezService {
                 .orElseThrow(() -> new RuntimeException("No existe PrimeraVez con id=" + id));
     }
 
-//    @Override
-//    public PrimeraVezDTO save(PrimeraVezDTO dto) {
-//        PrimeraVez pv = dto.getId() == null
-//                ? new PrimeraVez()
-//                : pvRepo.findById(dto.getId())
-//                .orElseThrow(() -> new RuntimeException("No existe PrimeraVez id=" + dto.getId()));
-//        // asociar joke
-//        pv.setJoke(jokeRepo.findById(dto.getJokeId())
-//                .orElseThrow(() -> new RuntimeException("Joke no encontrado")));
-//        pv.setPrograma(dto.getPrograma());
-//        pv.setFechaEmision(dto.getFechaEmision());
-//
-//        // teléfonos: borramos+reasignamos (cascade)
-//        pv.getTelefonos().clear();
-//        for (TelefonoDTO tDto : dto.getTelefonos()) {
-//            Telefono t = new Telefono();
-//            t.setNumero(tDto.getNumero());
-//            t.setPrimeraVez(pv);
-//            pv.getTelefonos().add(t);
-//        }
-//        PrimeraVez saved = pvRepo.save(pv);
-//        return toDto(saved);
-//    }
-
+    /**
+     * Guarda o actualiza una entidad de "Primera Vez".
+     *
+     * @param dto DTO de la entidad a guardar o actualizar
+     * @return Entidad guardada o actualizada en formato DTO
+     */
     @Override
     public PrimeraVezDTO save(PrimeraVezDTO dto) {
         PrimeraVez pv;
 
-        // 1) Si trae id, cargo por id
         if (dto.getId() != null) {
             pv = pvRepo.findById(dto.getId())
                     .orElseThrow(() -> new RuntimeException("No existe PrimeraVez id=" + dto.getId()));
-        }
-        // 2) Si no trae id pero sí trae jokeId y ya hay una fila con ese joke, lo cargo
-        else if (dto.getJokeId() != null) {
+        } else if (dto.getJokeId() != null) {
             pv = pvRepo.findByJoke_Id(dto.getJokeId())
                     .orElse(new PrimeraVez());
-        }
-        // 3) Si no hay ni id ni registro previo, creo uno nuevo
-        else {
+        } else {
             pv = new PrimeraVez();
         }
 
-        // Asocio el chiste (siempre hay que hacerlo, tanto en insert como en update)
         pv.setJoke(jokeRepo.findById(dto.getJokeId())
                 .orElseThrow(() -> new RuntimeException("Joke no encontrado")));
         pv.setPrograma(dto.getPrograma());
         pv.setFechaEmision(dto.getFechaEmision());
 
-        // Manejo de teléfonos (borro los antiguos y reasigno los del DTO)
         pv.getTelefonos().clear();
         for (TelefonoDTO tDto : dto.getTelefonos()) {
             Telefono t = new Telefono();
@@ -107,12 +110,21 @@ public class PrimeraVezServiceImpl implements IPrimeraVezService {
         return toDto(saved);
     }
 
-
+    /**
+     * Elimina una entidad de "Primera Vez" por el ID del chiste asociado.
+     *
+     * @param jokeId ID del chiste asociado
+     */
     @Override
     public void deleteByJokeId(Long jokeId) {
         pvRepo.deleteByJoke_Id(jokeId);
     }
 
+    /**
+     * Elimina una entidad de "Primera Vez" por su ID.
+     *
+     * @param id ID de la entidad a eliminar
+     */
     @Override
     public void delete(Long id) {
         if (!pvRepo.existsById(id)) {
@@ -121,6 +133,11 @@ public class PrimeraVezServiceImpl implements IPrimeraVezService {
         pvRepo.deleteById(id);
     }
 
+    /**
+     * Obtiene todas las entidades de "Primera Vez".
+     *
+     * @return Lista de entidades en formato DTO
+     */
     @Override
     public List<PrimeraVezDTO> findAll() {
         return pvRepo.findAll().stream()
@@ -128,6 +145,12 @@ public class PrimeraVezServiceImpl implements IPrimeraVezService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Convierte una entidad de "Primera Vez" a un DTO.
+     *
+     * @param pv Entidad de "Primera Vez"
+     * @return DTO de la entidad
+     */
     private PrimeraVezDTO toDto(PrimeraVez pv) {
         PrimeraVezDTO dto = mapper.map(pv, PrimeraVezDTO.class);
         dto.setJokeId(pv.getJoke().getId());

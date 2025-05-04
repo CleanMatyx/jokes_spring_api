@@ -3,14 +3,7 @@ package com.matiasborra.jokes.model.services;
 import com.matiasborra.jokes.dto.FlagDTO;
 import com.matiasborra.jokes.dto.JokeDTO;
 import com.matiasborra.jokes.model.dao.*;
-import com.matiasborra.jokes.model.entity.Joke;
-import com.matiasborra.jokes.model.entity.JokeFlag;
-import com.matiasborra.jokes.model.entity.PrimeraVez;
-import com.matiasborra.jokes.model.entity.Telefono;
-import com.matiasborra.jokes.model.entity.Category;
-import com.matiasborra.jokes.model.entity.Type;
-import com.matiasborra.jokes.model.entity.Language;
-import com.matiasborra.jokes.model.entity.Flag;
+import com.matiasborra.jokes.model.entity.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +13,13 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Implementación del servicio IJokeService.
+ * Proporciona métodos para gestionar los chistes, incluyendo operaciones CRUD y consultas personalizadas.
+ * También maneja relaciones con otras entidades como categorías, tipos, idiomas y banderas.
+ *
+ * @author Matias Borra
+ */
 @Service
 @Transactional
 public class JokeServiceImpl implements IJokeService {
@@ -31,21 +31,35 @@ public class JokeServiceImpl implements IJokeService {
     private final IFlagDAO flagRepo;
     private final ModelMapper mapper;
 
+    /**
+     * Constructor de JokeServiceImpl.
+     *
+     * @param jokeRepo     Repositorio de chistes
+     * @param categoryRepo Repositorio de categorías
+     * @param typeRepo     Repositorio de tipos
+     * @param languageRepo Repositorio de idiomas
+     * @param flagRepo     Repositorio de banderas
+     * @param mapper       Mapper para convertir entre entidades y DTOs
+     */
     public JokeServiceImpl(IJokeDAO jokeRepo,
                            ICategoryDAO categoryRepo,
                            ITypeDAO typeRepo,
                            ILanguageDAO languageRepo,
                            IFlagDAO flagRepo,
                            ModelMapper mapper) {
-        this.jokeRepo     = jokeRepo;
+        this.jokeRepo = jokeRepo;
         this.categoryRepo = categoryRepo;
-        this.typeRepo     = typeRepo;
+        this.typeRepo = typeRepo;
         this.languageRepo = languageRepo;
-        this.flagRepo     = flagRepo;
-        this.mapper       = mapper;
+        this.flagRepo = flagRepo;
+        this.mapper = mapper;
     }
 
-    /** Listar todos los chistes (para API y Web) **/
+    /**
+     * Obtiene todos los chistes ordenados por ID de forma ascendente.
+     *
+     * @return Lista de chistes en formato DTO
+     */
     @Override
     public List<JokeDTO> findAll() {
         return jokeRepo.findAllByOrderByIdAsc()
@@ -54,6 +68,12 @@ public class JokeServiceImpl implements IJokeService {
                 .collect(toList());
     }
 
+    /**
+     * Busca un chiste por su ID.
+     *
+     * @param id ID del chiste
+     * @return Chiste en formato DTO
+     */
     @Override
     public JokeDTO findById(Long id) {
         Joke joke = jokeRepo.findById(id)
@@ -61,6 +81,12 @@ public class JokeServiceImpl implements IJokeService {
         return toDto(joke);
     }
 
+    /**
+     * Crea un nuevo chiste.
+     *
+     * @param dto DTO del chiste a crear
+     * @return Chiste creado en formato DTO
+     */
     @Override
     public JokeDTO create(JokeDTO dto) {
         Joke j = buildEntityFromDto(dto, new Joke());
@@ -68,6 +94,13 @@ public class JokeServiceImpl implements IJokeService {
         return toDto(saved);
     }
 
+    /**
+     * Actualiza un chiste existente.
+     *
+     * @param id  ID del chiste a actualizar
+     * @param dto DTO con los datos actualizados
+     * @return Chiste actualizado en formato DTO
+     */
     @Override
     public JokeDTO update(Long id, JokeDTO dto) {
         Joke existing = jokeRepo.findById(id)
@@ -77,36 +110,39 @@ public class JokeServiceImpl implements IJokeService {
         return toDto(saved);
     }
 
+    /**
+     * Elimina un chiste por su ID.
+     *
+     * @param id ID del chiste a eliminar
+     */
     @Transactional
     public void delete(Long id) {
         Joke joke = jokeRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Chiste no encontrado"));
 
-        // 1) Limpiar las flags (join‐entities)
         joke.getJokeFlags().clear();
 
-        // 2) Limpiar la relación OneToOne con PrimeraVez (si existe)
         if (joke.getPrimeraVez() != null) {
-            // rompe la bidireccionalidad
             PrimeraVez pv = joke.getPrimeraVez();
-            pv.setJoke(null);                // rompe el FK
-            joke.setPrimeraVez(null);        // orphanRemoval lo borrará
+            pv.setJoke(null);
+            joke.setPrimeraVez(null);
         }
 
-        // 3) Forzar el flush para que Hibernate ejecute los DELETE en las tablas hijas
         jokeRepo.flush();
-
-        // 4) Ahora sí, borrar el chiste
         jokeRepo.deleteById(id);
     }
 
-    /** Construye o actualiza la entidad Joke a partir de un DTO **/
+    /**
+     * Construye o actualiza la entidad Joke a partir de un DTO.
+     *
+     * @param dto  DTO con los datos del chiste
+     * @param joke Entidad Joke a actualizar o crear
+     * @return Entidad Joke actualizada o creada
+     */
     private Joke buildEntityFromDto(JokeDTO dto, Joke joke) {
-        // actualizar texto
         joke.setText1(dto.getText1());
         joke.setText2(dto.getText2());
 
-        // categoría, tipo, idioma
         Category cat = categoryRepo.findById(dto.getCategory().getId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         Type type = typeRepo.findById(dto.getType().getId())
@@ -117,7 +153,6 @@ public class JokeServiceImpl implements IJokeService {
         joke.setType(type);
         joke.setLanguage(lang);
 
-        // flags
         joke.getJokeFlags().clear();
         if (dto.getFlagIds() != null) {
             for (Long fid : dto.getFlagIds()) {
@@ -133,17 +168,20 @@ public class JokeServiceImpl implements IJokeService {
         return joke;
     }
 
-    /** Mapea básica a DTO (texto, relaciones y flags) **/
+    /**
+     * Convierte una entidad Joke a un DTO.
+     *
+     * @param j Entidad Joke
+     * @return DTO del chiste
+     */
     private JokeDTO toDto(Joke j) {
         JokeDTO dto = mapper.map(j, JokeDTO.class);
 
-        // flags para API
         List<FlagDTO> flags = j.getJokeFlags().stream()
                 .map(jf -> mapper.map(jf.getFlag(), FlagDTO.class))
                 .collect(toList());
         dto.setFlags(flags);
 
-        // flagIds para Web
         List<Long> ids = flags.stream()
                 .map(FlagDTO::getId)
                 .collect(toList());
@@ -152,10 +190,11 @@ public class JokeServiceImpl implements IJokeService {
         return dto;
     }
 
-    /** --------------------------------------------------------
-     *  Métodos extra para “Jokes con PrimeraVez y Teléfonos”
-     *  -------------------------------------------------------*/
-
+    /**
+     * Obtiene todos los chistes con datos de "Primera Vez" y teléfonos.
+     *
+     * @return Lista de chistes en formato DTO
+     */
     @Override
     public List<JokeDTO> findAllWithPV() {
         return jokeRepo.findAllWithPrimeraVezAndTelefonos()
@@ -164,18 +203,28 @@ public class JokeServiceImpl implements IJokeService {
                 .collect(toList());
     }
 
+    /**
+     * Obtiene todos los chistes sin datos de "Primera Vez".
+     *
+     * @return Lista de chistes en formato DTO
+     */
     @Override
     public List<JokeDTO> findAllWithoutPV() {
         return jokeRepo.findByPrimeraVezIsNullOrderByIdAsc()
-                .stream().map(this::toDto).collect(toList());
+                .stream()
+                .map(this::toDto)
+                .collect(toList());
     }
 
-    /** Concatena al DTO los datos de primera vez y teléfonos **/
+    /**
+     * Convierte una entidad Joke a un DTO, incluyendo datos de "Primera Vez" y teléfonos.
+     *
+     * @param j Entidad Joke
+     * @return DTO del chiste
+     */
     private JokeDTO toDtoWithPV(Joke j) {
-        // primero el mapeo común
         JokeDTO dto = toDto(j);
 
-        // si existe primeraVez, lo llenamos
         PrimeraVez pv = j.getPrimeraVez();
         if (pv != null) {
             dto.setPrograma(pv.getPrograma());
@@ -189,7 +238,10 @@ public class JokeServiceImpl implements IJokeService {
     }
 
     /**
-     *  Filtrar por texto1 (no case sensitive)
+     * Filtra los chistes por texto1 (sin distinción de mayúsculas y minúsculas).
+     *
+     * @param text Texto a buscar
+     * @return Lista de chistes que coinciden con el filtro en formato DTO
      */
     @Override
     public List<JokeDTO> filterByText(String text) {

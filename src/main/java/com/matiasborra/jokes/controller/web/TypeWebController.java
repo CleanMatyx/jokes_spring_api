@@ -113,7 +113,7 @@ public class TypeWebController {
      * @param id ID del tipo a eliminar
      * @return Redirección al listado de tipos
      */
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         typeService.delete(id);
         return "redirect:/types";
