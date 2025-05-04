@@ -1,14 +1,17 @@
 package com.matiasborra.jokes.controller.web;
 
 import com.matiasborra.jokes.dto.JokeDTO;
+import com.matiasborra.jokes.model.projections.FlagJokeProjection;
 import com.matiasborra.jokes.model.services.ICategoryService;
 import com.matiasborra.jokes.model.services.IFlagService;
 import com.matiasborra.jokes.model.services.ILanguageService;
 import com.matiasborra.jokes.model.services.IJokeService;
 import com.matiasborra.jokes.model.services.ITypeService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +115,7 @@ public class JokeWebController {
      * @return Redirección a la lista de chistes
      */
     @PostMapping
-    public String create(@ModelAttribute("joke") JokeDTO joke,
+    public String create(@Valid @ModelAttribute("joke") JokeDTO joke,
                          @RequestParam(value = "flagIds", required = false) List<Long> flagIds) {
         joke.setFlagIds(flagIds != null ? flagIds : new ArrayList<>());
         jokeService.create(joke);
@@ -128,7 +131,7 @@ public class JokeWebController {
      * @return Redirección a la lista de chistes
      */
     @PostMapping("/{id}")
-    public String update(@PathVariable Long id, @ModelAttribute("joke") JokeDTO joke,
+    public String update(@Valid @PathVariable Long id, @ModelAttribute("joke") JokeDTO joke,
                          @RequestParam(value = "flagIds", required = false) List<Long> flagIds
     ) {
         joke.setFlagIds(flagIds != null ? flagIds : new ArrayList<>());
@@ -142,9 +145,25 @@ public class JokeWebController {
      * @param id ID del chiste a eliminar
      * @return Redirección a la lista de chistes
      */
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-        jokeService.delete(id);
+//    @GetMapping("/delete/{id}")
+//    public String deleteJoke(@PathVariable Long id, RedirectAttributes attrs) {
+//        try {
+//            jokeService.delete(id);
+//            attrs.addFlashAttribute("success", "Chiste eliminado correctamente");
+//        } catch (RuntimeException e) {
+//            attrs.addFlashAttribute("error", "No se pudo eliminar el chiste: " + e.getMessage());
+//        }
+//        return "redirect:/jokes";
+//    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteJoke(@PathVariable Long id, RedirectAttributes attrs) {
+        try {
+            jokeService.delete(id);
+            attrs.addFlashAttribute("success", "Chiste eliminado correctamente");
+        } catch (RuntimeException e) {
+            attrs.addFlashAttribute("error", "No se pudo eliminar el chiste: " + e.getMessage());
+        }
         return "redirect:/jokes";
     }
 
@@ -168,4 +187,12 @@ public class JokeWebController {
         model.addAttribute("q", q);
         return "jokes/list-with-pv";
     }
+
+    @GetMapping("/no-pv")
+    public String listWithoutPV(Model model) {
+        model.addAttribute("jokes", jokeService.findAllWithoutPV());
+        model.addAttribute("q", null);
+        return "jokes/list";
+    }
+
 }

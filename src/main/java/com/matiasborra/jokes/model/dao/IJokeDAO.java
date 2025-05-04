@@ -1,9 +1,11 @@
 package com.matiasborra.jokes.model.dao;
 
 import com.matiasborra.jokes.model.entity.Joke;
+import com.matiasborra.jokes.model.projections.FlagJokeProjection;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -82,4 +84,12 @@ public interface IJokeDAO extends JpaRepository<Joke, Long> {
      * @return Lista de entidades Joke que coinciden con el texto
      */
     List<Joke> findByText1ContainingIgnoreCase(String text);
+
+    List<Joke> findByPrimeraVezIsNullOrderByIdAsc();
+
+    /**
+     * Recupera id, text1 y idioma de todos los chistes que tengan el flag dada
+     */
+    List<FlagJokeProjection> findByFlags_Id(Long flagId);
+
 }

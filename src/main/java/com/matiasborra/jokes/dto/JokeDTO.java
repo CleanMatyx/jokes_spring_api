@@ -1,5 +1,7 @@
 package com.matiasborra.jokes.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.List;
 public class JokeDTO {
 
     private Long id;
+    @NotBlank(message = "{joke.notblank}")
     private String text1;
     private String text2;
     private CategoryDTO category;

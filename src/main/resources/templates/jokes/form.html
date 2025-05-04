@@ -1,161 +1,222 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/styles.css}" type="text/css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+
     <title th:text="${joke.id} != null ? 'Editar chiste' : 'Nuevo chiste'">Formulario</title>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
 </head>
-<body>
+<body class="bg-white">
+
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="container mt-4">
-    <h1 th:text="${joke.id} != null ? 'Editar chiste' : 'Nuevo chiste'"></h1>
+<div class="container mt-5" style="max-width: 600px;">
+    <div class="card shadow-sm">
+        <div class="card-body">
 
-    <!-- Creación -->
-    <form th:if="${joke.id} == null"
-          th:action="@{/jokes}"
-          th:object="${joke}"
-          method="post">
+            <h1 class="h3 mb-4"
+                th:text="${joke.id} != null ? 'Editar chiste' : 'Nuevo chiste'">
+                Formulario
+            </h1>
 
-        <!-- Texto 1 -->
-        <div class="mb-3">
-            <label th:for="'text1-new'" class="form-label">Texto 1</label>
-            <input type="text" th:id="'text1-new'" th:field="*{text1}" class="form-control"/>
-            <div class="text-danger" th:errors="*{text1}"></div>
+            <!-- FORMULARIO CREAR -->
+            <form th:if="${joke.id} == null"
+                  th:action="@{/jokes}"
+                  th:object="${joke}"
+                  method="post"
+                  class="row g-3">
+
+                <!-- Texto 1 -->
+                <div class="col-12">
+                    <label for="text1-new" class="form-label">Texto 1</label>
+                    <input type="text"
+                           id="text1-new"
+                           th:field="*{text1}"
+                           class="form-control"
+                           placeholder="Introduce Texto 1"
+                           required/>
+                    <div class="text-danger" th:errors="*{text1}"></div>
+                </div>
+
+                <!-- Texto 2 -->
+                <div class="col-12">
+                    <label for="text2-new" class="form-label">Texto 2</label>
+                    <input type="text"
+                           id="text2-new"
+                           th:field="*{text2}"
+                           class="form-control"
+                           placeholder="Introduce Texto 2"/>
+                    <div class="text-danger" th:errors="*{text2}"></div>
+                </div>
+
+                <!-- Categoría -->
+                <div class="col-md-4">
+                    <label for="category-new" class="form-label">Categoría</label>
+                    <select id="category-new"
+                            th:field="*{category.id}"
+                            class="form-select">
+                        <option th:each="c : ${categories}"
+                                th:value="${c.id}"
+                                th:text="${c.category}">Any</option>
+                    </select>
+                </div>
+
+                <!-- Tipo -->
+                <div class="col-md-4">
+                    <label for="type-new" class="form-label">Tipo</label>
+                    <select id="type-new"
+                            th:field="*{type.id}"
+                            class="form-select">
+                        <option th:each="t : ${types}"
+                                th:value="${t.id}"
+                                th:text="${t.type}">Single</option>
+                    </select>
+                </div>
+
+                <!-- Idioma -->
+                <div class="col-md-4">
+                    <label for="language-new" class="form-label">Idioma</label>
+                    <select id="language-new"
+                            th:field="*{language.id}"
+                            class="form-select">
+                        <option th:each="l : ${languages}"
+                                th:value="${l.id}"
+                                th:text="${l.language}">English</option>
+                    </select>
+                </div>
+
+                <!-- Flags -->
+                <div class="col-12">
+                    <label class="form-label">Flags</label>
+                    <div th:each="f : ${allFlags}" class="form-check form-check-inline">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               th:field="*{flagIds}"
+                               th:value="${f.id}"
+                               th:id="'flag-new-' + ${f.id}"/>
+                        <label th:for="'flag-new-' + ${f.id}"
+                               th:text="${f.flag}"
+                               class="form-check-label"></label>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="col-12 d-flex justify-content-end gap-2 mt-4">
+                    <button type="submit"
+                            class="btn btn-success px-4">
+                        <i class="bi bi-check-lg me-1"></i> Guardar
+                    </button>
+                    <a th:href="@{/jokes}"
+                       class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-x-lg me-1"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+
+            <!-- FORMULARIO EDITAR -->
+            <form th:if="${joke.id} != null"
+                  th:action="@{/jokes/{id}(id=${joke.id})}"
+                  th:object="${joke}"
+                  method="post"
+                  class="row g-3">
+
+                <!-- Texto 1 -->
+                <div class="col-12">
+                    <label th:for="${'text1-' + joke.id}" class="form-label">Texto 1</label>
+                    <input type="text"
+                           th:id="${'text1-' + joke.id}"
+                           th:field="*{text1}"
+                           class="form-control"/>
+                    <div class="text-danger" th:errors="*{text1}"></div>
+                </div>
+
+                <!-- Texto 2 -->
+                <div class="col-12">
+                    <label th:for="${'text2-' + joke.id}" class="form-label">Texto 2</label>
+                    <input type="text"
+                           th:id="${'text2-' + joke.id}"
+                           th:field="*{text2}"
+                           class="form-control"/>
+                    <div class="text-danger" th:errors="*{text2}"></div>
+                </div>
+
+                <!-- Categoría -->
+                <div class="col-md-4">
+                    <label th:for="${'category-' + joke.id}" class="form-label">Categoría</label>
+                    <select th:id="${'category-' + joke.id}"
+                            th:field="*{category.id}"
+                            class="form-select">
+                        <option th:each="c : ${categories}"
+                                th:value="${c.id}"
+                                th:text="${c.category}">Any</option>
+                    </select>
+                </div>
+
+                <!-- Tipo -->
+                <div class="col-md-4">
+                    <label th:for="${'type-' + joke.id}" class="form-label">Tipo</label>
+                    <select th:id="${'type-' + joke.id}"
+                            th:field="*{type.id}"
+                            class="form-select">
+                        <option th:each="t : ${types}"
+                                th:value="${t.id}"
+                                th:text="${t.type}">Single</option>
+                    </select>
+                </div>
+
+                <!-- Idioma -->
+                <div class="col-md-4">
+                    <label th:for="${'language-' + joke.id}" class="form-label">Idioma</label>
+                    <select th:id="${'language-' + joke.id}"
+                            th:field="*{language.id}"
+                            class="form-select">
+                        <option th:each="l : ${languages}"
+                                th:value="${l.id}"
+                                th:text="${l.language}">English</option>
+                    </select>
+                </div>
+
+                <!-- Flags -->
+                <div class="col-12">
+                    <label class="form-label">Flags</label>
+                    <div th:each="f : ${allFlags}" class="form-check form-check-inline">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               th:field="*{flagIds}"
+                               th:value="${f.id}"
+                               th:id="'flag-' + ${joke.id} + '-' + ${f.id}"/>
+                        <label th:for="'flag-' + ${joke.id} + '-' + ${f.id}"
+                               th:text="${f.flag}"
+                               class="form-check-label"></label>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="col-12 d-flex justify-content-end gap-2 mt-4">
+                    <button type="submit"
+                            class="btn btn-success px-4">
+                        <i class="bi bi-check-lg me-1"></i> Actualizar
+                    </button>
+                    <a th:href="@{/jokes}"
+                       class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-x-lg me-1"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+
         </div>
-
-        <!-- Texto 2 -->
-        <div class="mb-3">
-            <label th:for="'text2-new'" class="form-label">Texto 2</label>
-            <input type="text" th:id="'text2-new'" th:field="*{text2}" class="form-control"/>
-            <div class="text-danger" th:errors="*{text2}"></div>
-        </div>
-
-        <!-- Categoría -->
-        <div class="mb-3">
-            <label th:for="'category-new'" class="form-label">Categoría</label>
-            <select th:id="'category-new'" th:field="*{category.id}" class="form-select">
-                <option th:each="c : ${categories}"
-                        th:value="${c.id}"
-                        th:text="${c.category}"/>
-            </select>
-        </div>
-
-        <!-- Tipo -->
-        <div class="mb-3">
-            <label th:for="'type-new'" class="form-label">Tipo</label>
-            <select th:id="'type-new'" th:field="*{type.id}" class="form-select">
-                <option th:each="t : ${types}"
-                        th:value="${t.id}"
-                        th:text="${t.type}"/>
-            </select>
-        </div>
-
-        <!-- Idioma -->
-        <div class="mb-3">
-            <label th:for="'language-new'" class="form-label">Idioma</label>
-            <select th:id="'language-new'" th:field="*{language.id}" class="form-select">
-                <option th:each="l : ${languages}"
-                        th:value="${l.id}"
-                        th:text="${l.language}"/>
-            </select>
-        </div>
-
-        <!-- Flags: bind a flagIds -->
-        <div class="mb-3">
-            <label class="form-label">Flags</label>
-            <div th:each="f : ${allFlags}" class="form-check">
-                <input class="form-check-input"
-                       type="checkbox"
-                       th:field="*{flagIds}"
-                       th:value="${f.id}"
-                       th:id="'flag-new-' + ${f.id}" />
-                <label th:for="'flag-new-' + ${f.id}"
-                       th:text="${f.flag}"
-                       class="form-check-label"></label>
-            </div>
-        </div>
-
-        <button class="btn btn-success">Guardar</button>
-        <a th:href="@{/jokes}" class="btn btn-secondary">Cancelar</a>
-    </form>
-
-    <!-- Edición -->
-    <form th:if="${joke.id} != null"
-          th:action="@{/jokes/{id}(id=${joke.id})}"
-          th:object="${joke}"
-          method="post">
-
-        <!-- Texto 1 -->
-        <div class="mb-3">
-            <label th:for="${'text1-' + joke.id}" class="form-label">Texto 1</label>
-            <input type="text"
-                   th:id="${'text1-' + joke.id}"
-                   th:field="*{text1}"
-                   class="form-control"/>
-            <div class="text-danger" th:errors="*{text1}"></div>
-        </div>
-
-        <!-- Texto 2 -->
-        <div class="mb-3">
-            <label th:for="${'text2-' + joke.id}" class="form-label">Texto 2</label>
-            <input type="text"
-                   th:id="${'text2-' + joke.id}"
-                   th:field="*{text2}"
-                   class="form-control"/>
-            <div class="text-danger" th:errors="*{text2}"></div>
-        </div>
-
-        <!-- Categoría -->
-        <div class="mb-3">
-            <label th:for="${'category-' + joke.id}" class="form-label">Categoría</label>
-            <select th:id="${'category-' + joke.id}" th:field="*{category.id}" class="form-select">
-                <option th:each="c : ${categories}"
-                        th:value="${c.id}"
-                        th:text="${c.category}"/>
-            </select>
-        </div>
-
-        <!-- Tipo -->
-        <div class="mb-3">
-            <label th:for="${'type-' + joke.id}" class="form-label">Tipo</label>
-            <select th:id="${'type-' + joke.id}" th:field="*{type.id}" class="form-select">
-                <option th:each="t : ${types}"
-                        th:value="${t.id}"
-                        th:text="${t.type}"/>
-            </select>
-        </div>
-
-        <!-- Idioma -->
-        <div class="mb-3">
-            <label th:for="${'language-' + joke.id}" class="form-label">Idioma</label>
-            <select th:id="${'language-' + joke.id}" th:field="*{language.id}" class="form-select">
-                <option th:each="l : ${languages}"
-                        th:value="${l.id}"
-                        th:text="${l.language}"/>
-            </select>
-        </div>
-
-        <!-- Flags: bind a flagIds (Thymeleaf marca los que ya estén en joke.flagIds) -->
-        <div class="mb-3">
-            <label class="form-label">Flags</label>
-            <div th:each="f : ${allFlags}" class="form-check">
-                <input class="form-check-input"
-                       type="checkbox"
-                       th:field="*{flagIds}"
-                       th:value="${f.id}"
-                       th:id="'flag-' + ${joke.id} + '-' + ${f.id}" />
-                <label th:for="'flag-' + ${joke.id} + '-' + ${f.id}"
-                       th:text="${f.flag}"
-                       class="form-check-label"></label>
-            </div>
-        </div>
-
-        <button class="btn btn-success">Guardar</button>
-        <a th:href="@{/jokes}" class="btn btn-secondary">Cancelar</a>
-    </form>
+    </div>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoA6VJfK3oI5lQZ5rZ/hvUn1Flp1rVmU8AhTmF0Xuvip4OG"
+        crossorigin="anonymous"></script>
 </body>
 </html>

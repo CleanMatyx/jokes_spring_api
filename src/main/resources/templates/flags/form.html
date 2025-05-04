@@ -1,55 +1,79 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8"/>
-    <title th:text="${flag.id} != null ? 'Editar Flag' : 'Nueva Flag'">Formulario Flag</title>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- Bootstrap CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"/>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/styles.css}"/>
+
+    <!-- Bootstrap Icons -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+            rel="stylesheet"/>
+
+    <title th:text="${flag.id} != null ? 'Editar Flag' : 'Nueva Flag'">
+        Formulario Flag
+    </title>
 </head>
-<body>
+<body class="bg-white">
+
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="container mt-4">
-    <h1 th:text="${flag.id} != null ? 'Editar Flag' : 'Nueva Flag'"></h1>
+<div class="container mt-5" style="max-width: 600px;">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="h3 mb-4"
+                th:text="${flag.id} != null ? 'Editar Flag' : 'Nueva Flag'">
+                Formulario Flag
+            </h1>
 
-    <!-- Crear -->
-    <form th:if="${flag.id} == null"
-          th:action="@{/flags}"
-          th:object="${flag}"
-          method="post">
-        <div class="mb-3">
-            <label for="flag-new" class="form-label">Flag</label>
-            <input type="text"
-                   id="flag-new"
-                   th:field="*{flag}"
-                   class="form-control"
-                   placeholder="Introduce la flag"/>
-            <div class="text-danger" th:errors="*{flag}"></div>
+            <form th:action="@{${flag.id} != null ? '/flags/' + ${flag.id} : '/flags'}"
+                  th:object="${flag}"
+                  method="post">
+                <!-- Si tu backend usa PUT para actualizar, descomenta: -->
+                <!-- <input type="hidden" name="_method" value="PUT" th:if="${flag.id != null}"/> -->
+
+                <div class="mb-4">
+                    <label for="flag-field" class="form-label">Flag</label>
+                    <input type="text"
+                           id="flag-field"
+                           th:field="*{flag}"
+                           class="form-control"
+                           placeholder="Introduce la flag"/>
+                    <div class="text-danger" th:errors="*{flag}"></div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="submit"
+                            class="btn btn-success px-4">
+                        <i class="bi bi-check-lg me-1"></i>
+                        <span th:text="${flag.id} != null ? 'Actualizar' : 'Guardar'">
+                Guardar
+              </span>
+                    </button>
+                    <a th:href="@{/flags}"
+                       class="btn btn-secondary px-4">
+                        <i class="bi bi-x-lg me-1"></i>
+                        Cancelar
+                    </a>
+                </div>
+            </form>
         </div>
-        <button class="btn btn-success">Guardar</button>
-        <a th:href="@{/flags}" class="btn btn-secondary">Cancelar</a>
-    </form>
-
-    <!-- Editar -->
-    <form th:if="${flag.id} != null"
-          th:action="@{/flags}"
-          th:object="${flag}"
-          method="post">
-        <input type="hidden" th:field="*{id}"/>
-
-        <div class="mb-3">
-            <label for="flag-edit" class="form-label">Flag</label>
-            <input type="text"
-                   id="flag-edit"
-                   th:field="*{flag}"
-                   class="form-control"
-                   placeholder="Introduce la flag"/>
-            <div class="text-danger" th:errors="*{flag}"></div>
-        </div>
-        <button class="btn btn-success">Actualizar</button>
-        <a th:href="@{/flags}" class="btn btn-secondary">Cancelar</a>
-    </form>
+    </div>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoA6VJfK3oI5lQZ5rZ/hvUn1Flp1rVmU8AhTmF0Xuvip4OG"
+        crossorigin="anonymous">
+</script>
 </body>
 </html>

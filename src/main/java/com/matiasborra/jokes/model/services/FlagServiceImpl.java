@@ -1,8 +1,11 @@
 package com.matiasborra.jokes.model.services;
 
 import com.matiasborra.jokes.dto.FlagDTO;
+import com.matiasborra.jokes.dto.FlagJokeDTO;
 import com.matiasborra.jokes.model.dao.IFlagDAO;
+import com.matiasborra.jokes.model.dao.IJokeDAO;
 import com.matiasborra.jokes.model.entity.Flag;
+import com.matiasborra.jokes.model.projections.FlagJokeProjection;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +19,12 @@ public class FlagServiceImpl implements IFlagService {
 
     private final IFlagDAO flagRepo;
     private final ModelMapper mapper;
+    private final IJokeDAO jokeRepo;
 
-    public FlagServiceImpl(IFlagDAO flagRepo, ModelMapper mapper) {
+    public FlagServiceImpl(IFlagDAO flagRepo, IJokeDAO jokeRepo, ModelMapper mapper) {
         this.flagRepo = flagRepo;
-        this.mapper   = mapper;
+        this.jokeRepo = jokeRepo;
+        this.mapper = mapper;
     }
 
     @Override
@@ -57,5 +62,10 @@ public class FlagServiceImpl implements IFlagService {
     @Override
     public void delete(Long id) {
         flagRepo.deleteById(id);
+    }
+
+    @Override
+    public List<FlagJokeProjection> listarPorFlag(Long flagId) {
+        return jokeRepo.findByFlags_Id(flagId);
     }
 }

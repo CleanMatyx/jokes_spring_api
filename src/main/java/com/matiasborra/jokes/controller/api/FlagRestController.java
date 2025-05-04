@@ -1,7 +1,9 @@
 package com.matiasborra.jokes.controller.api;
 
 import com.matiasborra.jokes.dto.FlagDTO;
+import com.matiasborra.jokes.model.projections.FlagJokeProjection;
 import com.matiasborra.jokes.model.services.IFlagService;
+import com.matiasborra.jokes.model.services.IJokeService;
 import com.matiasborra.jokes.utils.ResponseHelper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controlador REST para gestionar los flags.
@@ -21,14 +24,16 @@ import java.util.List;
 public class FlagRestController {
 
     private final IFlagService flagService;
+    private final IJokeService jokeService;
 
     /**
      * Constructor que inyecta el servicio de flags.
      *
      * @param flagService Servicio de flags
      */
-    public FlagRestController(IFlagService flagService) {
+    public FlagRestController(IFlagService flagService, IJokeService jokeService) {
         this.flagService = flagService;
+        this.jokeService = jokeService;
     }
 
     /**
@@ -40,6 +45,7 @@ public class FlagRestController {
     public List<FlagDTO> getAll() {
         return flagService.findAll();
     }
+
 
     /**
      * Obtiene un flag por su ID.
@@ -107,7 +113,40 @@ public class FlagRestController {
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseHelper.createErrorResponse(
-                    "Flag con Id: " + id + " no encontrada",
+                    "Flag con Id: " + id + " error al eliminar" + e.getMessage(),
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/jokes/{flagId}")
+    public ResponseEntity<Object> getJokesByFlag(@PathVariable Long flagId) {
+        try {
+            // 1) Carga el flag (solo para obtener id y nombre)
+            var flagDto = flagService.findById(flagId);
+
+            // 2) Lista las proyecciones
+            var jokes = flagService.listarPorFlag(flagId);
+
+            if (jokes.isEmpty()) {
+                // si prefieres un 204 sin cuerpo:
+                return ResponseHelper.createErrorResponse(
+                        "No hay chistes para el flag " + flagId,
+                        HttpStatus.NO_CONTENT);
+            }
+
+            // 3) Construye el payload combinando flag + lista
+            Map<String,Object> payload = Map.of(
+                    "flagId",   flagDto.getId(),
+                    "flagName", flagDto.getFlag(),
+                    "jokes",    jokes
+            );
+
+            // 4) Devuelve con wrapper
+            return ResponseHelper.createSuccessResponse(payload);
+
+        } catch (RuntimeException e) {
+            return ResponseHelper.createErrorResponse(
+                    "Flag con Id: " + flagId + " no encontrada",
                     HttpStatus.NOT_FOUND);
         }
     }

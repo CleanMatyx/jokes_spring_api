@@ -32,6 +32,12 @@ public class PrimeraVezWebController {
         this.jokeService = jokeService;
     }
 
+    @GetMapping
+    public String list(Model model) {
+        model.addAttribute("entries", pvService.findAll());
+        return "primera_vez/list";
+    }
+
     /**
      * Muestra el formulario para crear una nueva entidad "Primera Vez".
      *
@@ -78,7 +84,7 @@ public class PrimeraVezWebController {
     @PostMapping("/save")
     public String save(@ModelAttribute("primeraVez") PrimeraVezDTO dto) {
         pvService.save(dto);
-        return "redirect:/jokes";
+        return "redirect:/primera_vez";
     }
 
     /**
@@ -90,6 +96,7 @@ public class PrimeraVezWebController {
     @GetMapping("/delete/{jokeId}")
     public String delete(@PathVariable Long jokeId) {
         pvService.deleteByJokeId(jokeId);
-        return "redirect:/jokes";
+        return "redirect:/primera_vez";
     }
+
 }

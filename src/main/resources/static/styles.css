@@ -1,0 +1,18 @@
+/* Limita la altura de la tabla y permite scroll vertical */
+.table-responsive {
+    max-height: 60vh;
+}
+
+/* Encabezados pegajosos */
+.table-responsive thead th {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa; /* mismo color que .table-light */
+    z-index: 1;
+}
+
+/* Alinea las acciones a la derecha y deja un pequeño margen */
+.actions-cell {
+    padding-right: 1rem;
+    white-space: nowrap;
+}

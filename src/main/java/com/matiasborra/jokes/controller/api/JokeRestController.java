@@ -107,7 +107,7 @@ public class JokeRestController {
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseHelper.createErrorResponse(
-                    "Chiste con Id: " + id + " no encontrado",
+                    "Chiste con Id: " + id + " error al eliminar. Error: " + e.getMessage(),
                     HttpStatus.NOT_FOUND);
         }
     }
@@ -121,4 +121,6 @@ public class JokeRestController {
     public ResponseEntity<List<JokeDTO>> getAllWithPrimeraVez() {
         return ResponseEntity.ok(jokeService.findAllWithPV());
     }
+
+
 }

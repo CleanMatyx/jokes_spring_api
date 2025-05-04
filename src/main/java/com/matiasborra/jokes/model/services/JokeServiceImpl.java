@@ -77,8 +77,26 @@ public class JokeServiceImpl implements IJokeService {
         return toDto(saved);
     }
 
-    @Override
+    @Transactional
     public void delete(Long id) {
+        Joke joke = jokeRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Chiste no encontrado"));
+
+        // 1) Limpiar las flags (join‐entities)
+        joke.getJokeFlags().clear();
+
+        // 2) Limpiar la relación OneToOne con PrimeraVez (si existe)
+        if (joke.getPrimeraVez() != null) {
+            // rompe la bidireccionalidad
+            PrimeraVez pv = joke.getPrimeraVez();
+            pv.setJoke(null);                // rompe el FK
+            joke.setPrimeraVez(null);        // orphanRemoval lo borrará
+        }
+
+        // 3) Forzar el flush para que Hibernate ejecute los DELETE en las tablas hijas
+        jokeRepo.flush();
+
+        // 4) Ahora sí, borrar el chiste
         jokeRepo.deleteById(id);
     }
 
@@ -144,6 +162,12 @@ public class JokeServiceImpl implements IJokeService {
                 .stream()
                 .map(this::toDtoWithPV)
                 .collect(toList());
+    }
+
+    @Override
+    public List<JokeDTO> findAllWithoutPV() {
+        return jokeRepo.findByPrimeraVezIsNullOrderByIdAsc()
+                .stream().map(this::toDto).collect(toList());
     }
 
     /** Concatena al DTO los datos de primera vez y teléfonos **/

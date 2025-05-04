@@ -44,8 +44,14 @@ public class Joke implements Serializable {
 	@OneToMany(mappedBy = "joke", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<JokeFlag> jokeFlags = new HashSet<>();
 
-	@OneToOne(mappedBy = "joke", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, optional = true)
+	@OneToOne(mappedBy = "joke", cascade = CascadeType.ALL, orphanRemoval = true,
+			fetch = FetchType.LAZY, optional = true)
 	private PrimeraVez primeraVez;
+
+	@ManyToMany
+	@JoinTable(name="jokes_flags", joinColumns = @JoinColumn(name="joke_id"),
+			inverseJoinColumns = @JoinColumn(name="flag_id"))
+	private Set<Flag> flags = new HashSet<>();
 
 	/**
 	 * Constructor por defecto.
@@ -215,5 +221,23 @@ public class Joke implements Serializable {
 	 */
 	public void setPrimeraVez(PrimeraVez primeraVez) {
 		this.primeraVez = primeraVez;
+	}
+
+	/**
+	 * Obtiene el conjunto de banderas asociadas al chiste.
+	 *
+	 * @return Conjunto de banderas asociadas
+	 */
+	public Set<Flag> getFlags() {
+		return flags;
+	}
+
+	/**
+	 * Establece el conjunto de banderas asociadas al chiste.
+	 *
+	 * @param flags Conjunto de banderas asociadas
+	 */
+	public void setFlags(Set<Flag> flags) {
+		this.flags = flags;
 	}
 }

@@ -1,40 +1,96 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
   <meta charset="UTF-8"/>
-  <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
-  <title>Primera Emisión</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <!-- Bootstrap CSS -->
+  <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet"/>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" th:href="@{/styles.css}" type="text/css"/>
+  <!-- Bootstrap Icons -->
+  <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+          rel="stylesheet"/>
+
+  <title>Primera Vez</title>
 </head>
-<body>
+<body class="bg-white">
+
 <div th:replace="~{fragments/header :: header}"></div>
+
 <div class="container mt-4">
-  <h1>Primera Vez</h1>
-  <a th:href="@{/primera_vez/new}" class="btn btn-primary mb-3">Nueva emisión</a>
-  <table class="table">
-    <thead>
-    <tr>
-      <th>ID</th><th>Joke</th><th>Programa</th><th>Fecha</th><th>Teléfonos</th><th>Acciones</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="pv : ${entries}">
-      <td th:text="${pv.id}"></td>
-      <td th:text="${pv.jokeId} + ' – ' + pv.text1"></td>
-      <td th:text="${pv.programa}"></td>
-      <td th:text="${pv.fechaEmision}"></td>
-      <td>
-        <span th:each="t : ${pv.telefonos}" th:text="${t.numero} + ' '"></span>
-      </td>
-      <td>
-        <a th:href="@{/primera_vez/{id}(id=${pv.id})}" class="btn btn-sm btn-secondary">✎</a>
-        <a th:href="@{/primera_vez/delete/{id}(id=${pv.id})}"
-           class="btn btn-sm btn-danger"
-           onclick="return confirm('¿Borrar?');">🗑</a>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 m-0">Primera Vez</h1>
+    <a th:href="@{/jokes}" class="btn btn-secondary px-3">
+      <i class="bi bi-arrow-left me-1"></i> Volver a chistes
+    </a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body p-3">
+
+      <div class="table-responsive">
+        <table class="table table-striped mb-0">
+          <caption class="visually-hidden">Listado de primeras emisiones</caption>
+          <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Joke ID</th>
+            <th>Programa</th>
+            <th>Fecha emisión</th>
+            <th>Teléfonos</th>
+            <th class="text-end pe-3">Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:if="${#lists.isEmpty(entries)}">
+            <td colspan="6" class="text-center py-4">
+              No hay emisiones registradas
+            </td>
+          </tr>
+          <tr th:each="pv : ${entries}">
+            <td th:text="${pv.id}">1</td>
+            <td th:text="${pv.jokeId}">1</td>
+            <td th:text="${pv.programa}">El Club del Chiste</td>
+            <td th:text="${#temporals.format(pv.fechaEmision,'yyyy-MM-dd HH:mm')}">
+              2025-05-04 18:00
+            </td>
+            <td>
+                <span th:each="t : ${pv.telefonos}" class="d-block"
+                      th:text="${t.numero}">555-1234</span>
+            </td>
+            <td class="text-end pe-3">
+              <div class="btn-group gap-2" role="group">
+                <a th:href="@{/primera_vez/edit/{jokeId}(jokeId=${pv.jokeId})}"
+                   class="btn btn-warning btn-sm px-3"
+                   title="Editar emisión">
+                  <i class="bi bi-pencil me-1"></i> Editar
+                </a>
+                <a th:href="@{/primera_vez/delete/{jokeId}(jokeId=${pv.jokeId})}"
+                   class="btn btn-danger btn-sm px-3"
+                   th:onclick="|return confirm('¿Borrar emisión del chiste ${pv.jokeId}?');|"
+                   title="Borrar emisión">
+                  <i class="bi bi-trash me-1"></i> Borrar
+                </a>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
 </div>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous">
+</script>
 </body>
 </html>

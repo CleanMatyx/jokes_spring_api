@@ -11,6 +11,7 @@ public interface IJokeService {
     JokeDTO update(Long id, JokeDTO dto);
     void delete(Long id);
     List<JokeDTO> findAllWithPV();
+    List<JokeDTO> findAllWithoutPV();
     List<JokeDTO> filterByText(String q);
 
 }
