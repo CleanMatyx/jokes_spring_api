@@ -5,13 +5,25 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuración de Jackson para el mapeo de objetos.
+ * Configura el uso de ModelMapper con estrategias estrictas y mapeos personalizados.
+ *
+ * @author Matias Borra
+ */
 @Configuration
 public class JacksonConfig {
 
+    /**
+     * Configura y proporciona un bean de ModelMapper.
+     * Incluye estrategias estrictas y mapeos personalizados para entidades específicas.
+     *
+     * @return Instancia configurada de ModelMapper
+     */
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();
-        // Estrategia estrita: coincidencia exacta de nombres
+        // Estrategia estricta: coincidencia exacta de nombres
         mapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT)
                 .setFieldMatchingEnabled(true)

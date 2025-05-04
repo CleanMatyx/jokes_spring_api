@@ -2,12 +2,12 @@ package com.matiasborra.jokes.controller.api;
 
 import com.matiasborra.jokes.dto.PrimeraVezDTO;
 import com.matiasborra.jokes.model.services.IPrimeraVezService;
+import com.matiasborra.jokes.utils.ResponseHelper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Controlador REST para gestionar las operaciones relacionadas con "Primera Vez".
@@ -52,9 +52,9 @@ public class PrimeraVezRestController {
             PrimeraVezDTO dto = primeraVezService.findById(id);
             return ResponseEntity.ok(dto);
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Primera vez con ID: " + id + " no encontrada",
-                            "status", HttpStatus.NOT_FOUND.value()));
+            return ResponseHelper.createErrorResponse(
+                    "Primera vez con ID: " + id + " no encontrada",
+                    HttpStatus.NOT_FOUND);
         }
     }
 
@@ -70,9 +70,9 @@ public class PrimeraVezRestController {
             PrimeraVezDTO dto = primeraVezService.findByJokeId(jokeId);
             return ResponseEntity.ok(dto);
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Primera vez con JokeId: " + jokeId + " no encontrada",
-                            "status", HttpStatus.NOT_FOUND.value()));
+            return ResponseHelper.createErrorResponse(
+                    "Primera vez con JokeId: " + jokeId + " no encontrada",
+                    HttpStatus.NOT_FOUND);
         }
     }
 
@@ -88,9 +88,9 @@ public class PrimeraVezRestController {
             PrimeraVezDTO saved = primeraVezService.save(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "Error al crear la primera vez" + dto,
-                            "status", HttpStatus.BAD_REQUEST.value()));
+            return ResponseHelper.createErrorResponse(
+                    "Error al crear la primera vez",
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -108,9 +108,9 @@ public class PrimeraVezRestController {
             PrimeraVezDTO updated = primeraVezService.save(dto);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Primera vez con ID: " + id + " no encontrada",
-                            "status", HttpStatus.NOT_FOUND.value()));
+            return ResponseHelper.createErrorResponse(
+                    "Primera vez con ID: " + id + " no encontrada",
+                    HttpStatus.NOT_FOUND);
         }
     }
 
@@ -128,9 +128,9 @@ public class PrimeraVezRestController {
             PrimeraVezDTO updated = primeraVezService.save(dto);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Primera vez con JokeId: " + jokeId + " no encontrada",
-                            "status", HttpStatus.NOT_FOUND.value()));
+            return ResponseHelper.createErrorResponse(
+                    "Primera vez con JokeId: " + jokeId + " no encontrada",
+                    HttpStatus.NOT_FOUND);
         }
     }
 
@@ -146,9 +146,9 @@ public class PrimeraVezRestController {
             primeraVezService.delete(id);
             return ResponseEntity.ok().build();
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Primera vez con ID: " + id + " no encontrada",
-                            "status", HttpStatus.NOT_FOUND.value()));
+            return ResponseHelper.createErrorResponse(
+                    "Primera vez con ID: " + id + " no encontrada",
+                    HttpStatus.NOT_FOUND);
         }
     }
 
@@ -164,9 +164,9 @@ public class PrimeraVezRestController {
             primeraVezService.deleteByJokeId(jokeId);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Primera vez con JokeId: " + jokeId + " no encontrada",
-                            "status", HttpStatus.NOT_FOUND.value()));
+            return ResponseHelper.createErrorResponse(
+                    "Primera vez con JokeId: " + jokeId + " no encontrada",
+                    HttpStatus.NOT_FOUND);
         }
     }
 }

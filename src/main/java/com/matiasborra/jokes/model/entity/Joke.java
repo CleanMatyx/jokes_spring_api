@@ -5,12 +5,21 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Entidad Joke.
+ * Representa un chiste con su categoría, idioma, tipo y banderas asociadas.
+ * También puede estar vinculado a una entidad PrimeraVez.
+ *
+ * @author Matias Borra
+ */
 @Entity
 @Table(name = "jokes", schema = "public")
 public class Joke implements Serializable {
+
 	private static final long serialVersionUID = 1L;
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", updatable = false, nullable = false)
 	private Long id;
 
@@ -35,43 +44,176 @@ public class Joke implements Serializable {
 	@OneToMany(mappedBy = "joke", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<JokeFlag> jokeFlags = new HashSet<>();
 
-	@OneToOne(mappedBy = "joke", cascade = CascadeType.ALL, orphanRemoval = true,
-			fetch = FetchType.LAZY, optional = true)
+	@OneToOne(mappedBy = "joke", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, optional = true)
 	private PrimeraVez primeraVez;
 
+	/**
+	 * Constructor por defecto.
+	 */
 	public Joke() {}
 
-	public Long getId() { return id; }
-	public void setId(Long id) { this.id = id; }
+	/**
+	 * Obtiene el ID del chiste.
+	 *
+	 * @return ID del chiste
+	 */
+	public Long getId() {
+		return id;
+	}
 
-	public Category getCategory() { return category; }
-	public void setCategory(Category category) { this.category = category; }
+	/**
+	 * Establece el ID del chiste.
+	 *
+	 * @param id ID del chiste
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-	public Language getLanguage() { return language; }
-	public void setLanguage(Language language) { this.language = language; }
+	/**
+	 * Obtiene la categoría del chiste.
+	 *
+	 * @return Categoría del chiste
+	 */
+	public Category getCategory() {
+		return category;
+	}
 
-	public Type getType() { return type; }
-	public void setType(Type type) { this.type = type; }
+	/**
+	 * Establece la categoría del chiste.
+	 *
+	 * @param category Categoría del chiste
+	 */
+	public void setCategory(Category category) {
+		this.category = category;
+	}
 
-	public String getText1() { return text1; }
-	public void setText1(String text1) { this.text1 = text1; }
+	/**
+	 * Obtiene el idioma del chiste.
+	 *
+	 * @return Idioma del chiste
+	 */
+	public Language getLanguage() {
+		return language;
+	}
 
-	public String getText2() { return text2; }
-	public void setText2(String text2) { this.text2 = text2; }
+	/**
+	 * Establece el idioma del chiste.
+	 *
+	 * @param language Idioma del chiste
+	 */
+	public void setLanguage(Language language) {
+		this.language = language;
+	}
 
-	public Set<JokeFlag> getJokeFlags() { return jokeFlags; }
-	public void setJokeFlags(Set<JokeFlag> jokeFlags) { this.jokeFlags = jokeFlags; }
+	/**
+	 * Obtiene el tipo del chiste.
+	 *
+	 * @return Tipo del chiste
+	 */
+	public Type getType() {
+		return type;
+	}
 
+	/**
+	 * Establece el tipo del chiste.
+	 *
+	 * @param type Tipo del chiste
+	 */
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	/**
+	 * Obtiene el primer texto del chiste.
+	 *
+	 * @return Primer texto del chiste
+	 */
+	public String getText1() {
+		return text1;
+	}
+
+	/**
+	 * Establece el primer texto del chiste.
+	 *
+	 * @param text1 Primer texto del chiste
+	 */
+	public void setText1(String text1) {
+		this.text1 = text1;
+	}
+
+	/**
+	 * Obtiene el segundo texto del chiste.
+	 *
+	 * @return Segundo texto del chiste
+	 */
+	public String getText2() {
+		return text2;
+	}
+
+	/**
+	 * Establece el segundo texto del chiste.
+	 *
+	 * @param text2 Segundo texto del chiste
+	 */
+	public void setText2(String text2) {
+		this.text2 = text2;
+	}
+
+	/**
+	 * Obtiene el conjunto de banderas asociadas al chiste.
+	 *
+	 * @return Conjunto de banderas asociadas
+	 */
+	public Set<JokeFlag> getJokeFlags() {
+		return jokeFlags;
+	}
+
+	/**
+	 * Establece el conjunto de banderas asociadas al chiste.
+	 *
+	 * @param jokeFlags Conjunto de banderas asociadas
+	 */
+	public void setJokeFlags(Set<JokeFlag> jokeFlags) {
+		this.jokeFlags = jokeFlags;
+	}
+
+	/**
+	 * Agrega una bandera al chiste.
+	 *
+	 * @param f Bandera a agregar
+	 */
 	public void addFlag(Flag f) {
 		JokeFlag jf = new JokeFlag(this, f);
 		jokeFlags.add(jf);
 		f.getJokeFlags().add(jf);
 	}
+
+	/**
+	 * Elimina una bandera del chiste.
+	 *
+	 * @param f Bandera a eliminar
+	 */
 	public void removeFlag(Flag f) {
 		jokeFlags.removeIf(jf -> jf.getFlag().equals(f));
 		f.getJokeFlags().removeIf(jf -> jf.getJoke().equals(this));
 	}
 
-	public PrimeraVez getPrimeraVez() { return primeraVez; }
-	public void setPrimeraVez(PrimeraVez primeraVez) { this.primeraVez = primeraVez; }
+	/**
+	 * Obtiene la entidad PrimeraVez asociada al chiste.
+	 *
+	 * @return Entidad PrimeraVez asociada
+	 */
+	public PrimeraVez getPrimeraVez() {
+		return primeraVez;
+	}
+
+	/**
+	 * Establece la entidad PrimeraVez asociada al chiste.
+	 *
+	 * @param primeraVez Entidad PrimeraVez asociada
+	 */
+	public void setPrimeraVez(PrimeraVez primeraVez) {
+		this.primeraVez = primeraVez;
+	}
 }

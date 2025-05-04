@@ -2,46 +2,113 @@ package com.matiasborra.jokes.controller.api;
 
 import com.matiasborra.jokes.dto.FlagDTO;
 import com.matiasborra.jokes.model.services.IFlagService;
+import com.matiasborra.jokes.utils.ResponseHelper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para gestionar los flags.
+ * Proporciona endpoints para operaciones CRUD.
+ *
+ * @author Matias Borra
+ */
 @RestController
 @RequestMapping("/api/flags")
 public class FlagRestController {
 
     private final IFlagService flagService;
 
+    /**
+     * Constructor que inyecta el servicio de flags.
+     *
+     * @param flagService Servicio de flags
+     */
     public FlagRestController(IFlagService flagService) {
         this.flagService = flagService;
     }
 
+    /**
+     * Obtiene la lista de todos los flags.
+     *
+     * @return Lista de flags
+     */
     @GetMapping
     public List<FlagDTO> getAll() {
         return flagService.findAll();
     }
 
+    /**
+     * Obtiene un flag por su ID.
+     *
+     * @param id ID del flag
+     * @return Respuesta con el flag encontrado o un error si no existe
+     */
     @GetMapping("/{id}")
-    public FlagDTO getOne(@PathVariable Long id) {
-        return flagService.findById(id);
+    public ResponseEntity<Object> getOne(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(flagService.findById(id));
+        } catch (RuntimeException e) {
+            return ResponseHelper.createErrorResponse(
+                    "Flag con Id: " + id + " no encontrada",
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
+    /**
+     * Crea un nuevo flag.
+     *
+     * @param dto Datos del flag a crear
+     * @return Respuesta con el flag creado o un error si falla
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FlagDTO create(@Valid @RequestBody FlagDTO dto) {
-        return flagService.create(dto);
+    public ResponseEntity<Object> create(@Valid @RequestBody FlagDTO dto) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(flagService.create(dto));
+        } catch (RuntimeException e) {
+            return ResponseHelper.createErrorResponse(
+                    "Error al crear el flag",
+                    HttpStatus.BAD_REQUEST);
+        }
     }
 
+    /**
+     * Actualiza un flag existente.
+     *
+     * @param id  ID del flag a actualizar
+     * @param dto Datos actualizados del flag
+     * @return Respuesta con el flag actualizado o un error si no existe
+     */
     @PutMapping("/{id}")
-    public FlagDTO update(@PathVariable Long id, @RequestBody FlagDTO dto) {
-        return flagService.update(id, dto);
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody FlagDTO dto) {
+        try {
+            return ResponseEntity.ok(flagService.update(id, dto));
+        } catch (RuntimeException e) {
+            return ResponseHelper.createErrorResponse(
+                    "Flag con Id: " + id + " no encontrada",
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
+    /**
+     * Elimina un flag por su ID.
+     *
+     * @param id ID del flag a eliminar
+     * @return Respuesta sin contenido o un error si no existe
+     */
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        flagService.delete(id);
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
+        try {
+            flagService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseHelper.createErrorResponse(
+                    "Flag con Id: " + id + " no encontrada",
+                    HttpStatus.NOT_FOUND);
+        }
     }
 }

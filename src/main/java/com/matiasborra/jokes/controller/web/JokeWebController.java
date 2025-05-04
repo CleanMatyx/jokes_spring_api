@@ -14,6 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador web para gestionar los chistes.
+ * Proporciona vistas para operaciones CRUD y búsquedas específicas.
+ *
+ * @author Matias Borra
+ */
 @Controller
 @RequestMapping("/jokes")
 public class JokeWebController {
@@ -24,10 +30,17 @@ public class JokeWebController {
     private final ILanguageService languageService;
     private final IFlagService flagService;
 
-    public JokeWebController(IJokeService jokeService,
-                             ICategoryService categoryService,
-                             ITypeService typeService,
-                             ILanguageService languageService,
+    /**
+     * Constructor que inyecta los servicios necesarios.
+     *
+     * @param jokeService Servicio de chistes
+     * @param categoryService Servicio de categorías
+     * @param typeService Servicio de tipos
+     * @param languageService Servicio de idiomas
+     * @param flagService Servicio de banderas
+     */
+    public JokeWebController(IJokeService jokeService, ICategoryService categoryService,
+                             ITypeService typeService, ILanguageService languageService,
                              IFlagService flagService) {
         this.jokeService = jokeService;
         this.categoryService = categoryService;
@@ -36,12 +49,13 @@ public class JokeWebController {
         this.flagService = flagService;
     }
 
-//    @GetMapping
-//    public String list(Model model) {
-//        model.addAttribute("jokes", jokeService.findAll());
-//        return "jokes/list";
-//    }
-
+    /**
+     * Muestra la lista de chistes, con opción de filtrar por texto.
+     *
+     * @param q Texto para filtrar los chistes
+     * @param model Modelo para pasar datos a la vista
+     * @return Nombre de la vista de lista de chistes
+     */
     @GetMapping
     public String list(@RequestParam(required = false) String q, Model model) {
         List<JokeDTO> jokes;
@@ -55,10 +69,16 @@ public class JokeWebController {
         return "jokes/list";
     }
 
+    /**
+     * Muestra el formulario para crear un nuevo chiste.
+     *
+     * @param model Modelo para pasar datos a la vista
+     * @return Nombre de la vista del formulario de creación
+     */
     @GetMapping("/new")
     public String newForm(Model model) {
         JokeDTO dto = new JokeDTO();
-        dto.setFlagIds(new ArrayList<>());                  // garantía de lista no nula
+        dto.setFlagIds(new ArrayList<>());
         model.addAttribute("joke", dto);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("types", typeService.findAll());
@@ -67,9 +87,16 @@ public class JokeWebController {
         return "jokes/form";
     }
 
+    /**
+     * Muestra el formulario para editar un chiste existente.
+     *
+     * @param id ID del chiste a editar
+     * @param model Modelo para pasar datos a la vista
+     * @return Nombre de la vista del formulario de edición
+     */
     @GetMapping("/{id}")
     public String editForm(@PathVariable Long id, Model model) {
-        model.addAttribute("joke", jokeService.findById(id)); // aquí toDto ya ha llenado flagIds
+        model.addAttribute("joke", jokeService.findById(id));
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("types", typeService.findAll());
         model.addAttribute("languages", languageService.findAll());
@@ -77,41 +104,64 @@ public class JokeWebController {
         return "jokes/form";
     }
 
+    /**
+     * Procesa la creación de un nuevo chiste.
+     *
+     * @param joke Objeto JokeDTO con los datos del chiste
+     * @param flagIds Lista de IDs de banderas asociadas
+     * @return Redirección a la lista de chistes
+     */
     @PostMapping
-    public String create(
-            @ModelAttribute("joke") JokeDTO joke,
-            @RequestParam(value = "flagIds", required = false) List<Long> flagIds
-    ) {
-        // si no marcó ninguno, aseguramos lista vacía
+    public String create(@ModelAttribute("joke") JokeDTO joke,
+                         @RequestParam(value = "flagIds", required = false) List<Long> flagIds) {
         joke.setFlagIds(flagIds != null ? flagIds : new ArrayList<>());
         jokeService.create(joke);
         return "redirect:/jokes";
     }
 
+    /**
+     * Procesa la actualización de un chiste existente.
+     *
+     * @param id ID del chiste a actualizar
+     * @param joke Objeto JokeDTO con los datos actualizados
+     * @param flagIds Lista de IDs de banderas asociadas
+     * @return Redirección a la lista de chistes
+     */
     @PostMapping("/{id}")
-    public String update(
-            @PathVariable Long id,
-            @ModelAttribute("joke") JokeDTO joke,
-            @RequestParam(value = "flagIds", required = false) List<Long> flagIds
+    public String update(@PathVariable Long id, @ModelAttribute("joke") JokeDTO joke,
+                         @RequestParam(value = "flagIds", required = false) List<Long> flagIds
     ) {
         joke.setFlagIds(flagIds != null ? flagIds : new ArrayList<>());
         jokeService.update(id, joke);
         return "redirect:/jokes";
     }
 
+    /**
+     * Elimina un chiste por su ID.
+     *
+     * @param id ID del chiste a eliminar
+     * @return Redirección a la lista de chistes
+     */
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         jokeService.delete(id);
         return "redirect:/jokes";
     }
 
+    /**
+     * Muestra la lista de chistes con información adicional de "Primera Vez".
+     *
+     * @param q Texto para filtrar los chistes
+     * @param model Modelo para pasar datos a la vista
+     * @return Nombre de la vista de lista de chistes con "Primera Vez"
+     */
     @GetMapping("/with-pv")
-    public String listWithPV(@RequestParam(required=false) String q, Model model) {
+    public String listWithPV(@RequestParam(required = false) String q, Model model) {
         List<JokeDTO> jokes = jokeService.findAllWithPV();
         if (q != null && !q.isBlank()) {
             String lower = q.toLowerCase();
             jokes = jokes.stream()
-                    .filter(j-> j.getText1().toLowerCase().contains(lower))
+                    .filter(j -> j.getText1().toLowerCase().contains(lower))
                     .collect(Collectors.toList());
         }
         model.addAttribute("jokes", jokes);

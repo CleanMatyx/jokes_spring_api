@@ -8,6 +8,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controlador web para gestionar las operaciones relacionadas con "Primera Vez".
+ * Proporciona vistas para crear, editar, guardar y eliminar entidades.
+ *
+ * @author Matias Borra
+ */
 @Controller
 @RequestMapping("/primera_vez")
 public class PrimeraVezWebController {
@@ -15,50 +21,42 @@ public class PrimeraVezWebController {
     private final IPrimeraVezService pvService;
     private final IJokeService jokeService;
 
-    public PrimeraVezWebController(
-            IPrimeraVezService pvService,
-            IJokeService jokeService
-    ) {
-        this.pvService   = pvService;
+    /**
+     * Constructor que inyecta los servicios necesarios.
+     *
+     * @param pvService Servicio para gestionar "Primera Vez"
+     * @param jokeService Servicio para gestionar chistes
+     */
+    public PrimeraVezWebController(IPrimeraVezService pvService, IJokeService jokeService) {
+        this.pvService = pvService;
         this.jokeService = jokeService;
     }
 
-//    /** Formulario para dar de alta la primera vez de un chiste */
-//    @GetMapping("/new/{jokeId}")
-//    public String newForm(@PathVariable Long jokeId, Model model) {
-//        // Inicializamos el DTO con el jokeId para que el form lo conserve
-//        PrimeraVezDTO pv = new PrimeraVezDTO();
-//        pv.setJokeId(jokeId);
-//
-//        model.addAttribute("primeraVez", pv);
-//        model.addAttribute("joke", jokeService.findById(jokeId));
-//        return "primera_vez/form";
-//    }
-
+    /**
+     * Muestra el formulario para crear una nueva entidad "Primera Vez".
+     *
+     * @param jokeId ID del chiste asociado
+     * @param model Modelo para pasar datos a la vista
+     * @return Nombre de la vista del formulario
+     */
     @GetMapping("/new/{jokeId}")
     public String newForm(@PathVariable Long jokeId, Model model) {
         PrimeraVezDTO dto = new PrimeraVezDTO();
         dto.setJokeId(jokeId);
-        // Añado un teléfono vacío para que Thymeleaf muestre al menos un input
         dto.getTelefonos().add(new TelefonoDTO());
         model.addAttribute("primeraVez", dto);
         model.addAttribute("joke", jokeService.findById(jokeId));
         return "primera_vez/form";
     }
 
-//    /** Formulario de edición: si ya existe, lo recuperamos; si no, redirigimos a “new” */
-//    @GetMapping("/edit/{jokeId}")
-//    public String editForm(@PathVariable Long jokeId, Model model) {
-//        PrimeraVezDTO pv = pvService.findByJokeId(jokeId);
-//        if (pv == null) {
-//            // no existe → vamos al alta
-//            return "redirect:/primera_vez/new/" + jokeId;
-//        }
-//        model.addAttribute("primeraVez", pv);
-//        model.addAttribute("joke", jokeService.findById(jokeId));
-//        return "primera_vez/form";
-//    }
-
+    /**
+     * Muestra el formulario para editar una entidad "Primera Vez".
+     * Si no existe, redirige al formulario de creación.
+     *
+     * @param jokeId ID del chiste asociado
+     * @param model Modelo para pasar datos a la vista
+     * @return Nombre de la vista del formulario o redirección al formulario de creación
+     */
     @GetMapping("/edit/{jokeId}")
     public String editForm(@PathVariable Long jokeId, Model model) {
         PrimeraVezDTO dto = pvService.findByJokeId(jokeId);
@@ -71,8 +69,11 @@ public class PrimeraVezWebController {
     }
 
     /**
-     * Almacenamiento (tanto para creación como para actualización).
-     * El DTO lleva el campo jokeId en todo momento.
+     * Procesa el almacenamiento de una entidad "Primera Vez".
+     * Puede ser tanto para creación como para actualización.
+     *
+     * @param dto Objeto PrimeraVezDTO con los datos a guardar
+     * @return Redirección al listado de chistes
      */
     @PostMapping("/save")
     public String save(@ModelAttribute("primeraVez") PrimeraVezDTO dto) {
@@ -80,7 +81,12 @@ public class PrimeraVezWebController {
         return "redirect:/jokes";
     }
 
-    /** Borrado por jokeId */
+    /**
+     * Elimina una entidad "Primera Vez" por su JokeId.
+     *
+     * @param jokeId ID del chiste asociado
+     * @return Redirección al listado de chistes
+     */
     @GetMapping("/delete/{jokeId}")
     public String delete(@PathVariable Long jokeId) {
         pvService.deleteByJokeId(jokeId);
