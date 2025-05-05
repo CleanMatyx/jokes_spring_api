@@ -4,13 +4,112 @@
 
 <p>Este proyecto es una API REST y una interfaz web desarrolladas con <strong>Spring Boot</strong> para gestionar chistes organizados por categorías, flags, tipos e idiomas.</p>
 
-<h2>📁 Estructura del Proyecto</h2>
-<ul>
-    <li><strong>Controladores REST y web</strong> claramente separados.</li>
-    <li><strong>DTOs</strong> para la transferencia de datos limpia entre capas.</li>
-    <li><strong>Servicios</strong> implementados con interfaces para facilitar la inyección de dependencias.</li>
-    <li><strong>Manejo de excepciones</strong> personalizado y claro.</li>
-</ul>
+<h2>🗂️ Estructura del Proyecto</h2>
+
+<pre>
+src/main/java/com/matiasborra/jokes
+├── advice
+│   └── ValidationExceptionHandler.java
+├── config
+│   └── JacksonConfig.java
+├── controller
+│   ├── api
+│   │   ├── CategoryRestController.java
+│   │   ├── FlagRestController.java
+│   │   ├── JokeRestController.java
+│   │   ├── LanguageRestController.java
+│   │   ├── PrimeraVezRestController.java
+│   │   └── TypeRestController.java
+│   └── web
+│       ├── CategoryWebController.java
+│       ├── FlagWebController.java
+│       ├── JokeWebController.java
+│       ├── LanguageWebController.java
+│       ├── PrimeraVezWebController.java
+│       └── TypeWebController.java
+├── dto
+│   ├── CategoryDTO.java
+│   ├── FlagDTO.java
+│   ├── FlagJokeDTO.java
+│   ├── JokeDTO.java
+│   ├── LanguageDTO.java
+│   ├── LanguagesDTO.java
+│   ├── PrimeraVezDTO.java
+│   ├── TelefonoDTO.java
+│   └── TypeDTO.java
+├── JokesSpringApplication.java
+├── model
+│   ├── dao
+│   │   ├── ICategoryDAO.java
+│   │   ├── IFlagDAO.java
+│   │   ├── IJokeDAO.java
+│   │   ├── ILanguageDAO.java
+│   │   ├── ILanguagesDAO.java
+│   │   ├── IPrimeraVezDAO.java
+│   │   ├── ITelefonoDAO.java
+│   │   └── ITypeDAO.java
+│   ├── entity
+│   │   ├── Category.java
+│   │   ├── Flag.java
+│   │   ├── JokeFlag.java
+│   │   ├── JokeFlagKey.java
+│   │   ├── Joke.java
+│   │   ├── Language.java
+│   │   ├── Languages.java
+│   │   ├── PrimeraVez.java
+│   │   ├── Telefono.java
+│   │   └── Type.java
+│   ├── projections
+│   │   └── FlagJokeProjection.java
+│   └── services
+│       ├── CategoryServiceImpl.java
+│       ├── FlagServiceImpl.java
+│       ├── ICategoryService.java
+│       ├── IFlagService.java
+│       ├── IJokeService.java
+│       ├── ILanguageService.java
+│       ├── IPrimeraVezService.java
+│       ├── ITypeService.java
+│       ├── JokeServiceImpl.java
+│       ├── LanguageServiceImpl.java
+│       ├── PrimeraVezServiceImpl.java
+│       └── TypeServiceImpl.java
+└── utils
+    ├── ExceptionHandler.java
+    └── ResponseHelper.java
+
+src/main/resources
+├── application.properties
+├── data.sql
+├── hibernate.cfg.xml
+├── messages.properties
+├── scripts_sql
+├── static
+│   └── styles.css
+└── templates
+    ├── categories
+    │   ├── form.html
+    │   └── list.html
+    ├── flags
+    │   ├── form.html
+    │   └── list.html
+    ├── fragments
+    │   ├── footer.html
+    │   └── header.html
+    ├── jokes
+    │   ├── form.html
+    │   ├── list.html
+    │   └── list-with-pv.html
+    ├── languages
+    │   ├── form.html
+    │   └── list.html
+    ├── primera_vez
+    │   ├── form.html
+    │   └── list.html
+    └── types
+        ├── form.html
+        └── list.html
+</pre>
 
 <h2>⚙️ Áreas de Mejora Futuras</h2>
 
